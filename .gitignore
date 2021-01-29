@@ -1,7 +1,7 @@
 .gradle
 /build/
-.idea
 gradle
+src/main/resources/drivers
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -12,5 +12,14 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
+
+# keeping .keep files
+!*.gitkeep
