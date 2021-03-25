@@ -8,10 +8,12 @@ import java.net.URL;
 
 class TempFileIO {
 
+    // public TempFileIO() {}; // needed for unit test invocation
+
     private static File tempFile;
     private static BrowserConnectionData browserData;
 
-    public static BrowserConnectionData getBrowserData() {
+    private static BrowserConnectionData getBrowserData() {
         return browserData;
     }
 
@@ -23,7 +25,7 @@ class TempFileIO {
                 EnvironmentVariables.temporaryDirectory;
 
         File tempFolder = new File(tempPathStr);
-        if (tempFolder.exists()) {
+        if (!tempFolder.exists()) {
             System.out.println("FATAL ERROR! No TEMP folder found. Please set it up in core.EnvironmentVariables.java");
             System.exit(1);
         }
@@ -33,7 +35,7 @@ class TempFileIO {
         return tempFile;
     }
 
-    public static Boolean isTempFileExist() {
+    private static Boolean isTempFileExist() {
         return getTempFile().exists();
     }
 
@@ -62,15 +64,13 @@ class TempFileIO {
         }
 
         createBrowserData(urlStr, sessionIdStr);
-        return getBrowserData();
+        return browserData;
     }
 
-    public static void saveBrowserConnData(BrowserConnectionData data) {
-        if (isTempFileExist()) {
-            tempFile.delete();
-        }
 
-        browserData = data;
+
+    public static void saveBrowserConnData() {
+        deleteTempFileIfExists();
 
         BufferedWriter writer = null;
 
@@ -108,6 +108,12 @@ class TempFileIO {
 
     private static void printError(String action) {
         System.out.println("FATAL ERROR! Could not " + action + " the temp file!");
+    }
+
+    private static void deleteTempFileIfExists() {
+        if (isTempFileExist()) {
+            tempFile.delete();
+        }
     }
 
     static class BrowserConnectionData {
