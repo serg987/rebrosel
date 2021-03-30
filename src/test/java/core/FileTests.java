@@ -57,6 +57,16 @@ public class FileTests {
     }
 
     @Test
+    public void deleteTempFileTest() {
+        TempFileIO tempFileIO = new TempFileIO();
+        PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "deleteTempFileIfExists", null);
+        boolean exists = (boolean) PrivateMethodInvokerHelper
+                .invokePrivateMethod(tempFileIO, "isTempFileExist", null);
+        System.out.println("Temp file exists: " + exists + ". Should be false.");
+        Assert.assertFalse(exists);
+    }
+
+    @Test
     public void isTempFileExistTest() {
         TempFileIO tempFileIO = new TempFileIO();
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "deleteTempFileIfExists", null);

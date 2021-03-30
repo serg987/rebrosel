@@ -1,10 +1,6 @@
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.*;
 
 import java.net.MalformedURLException;
@@ -17,49 +13,54 @@ import static core.WebDriverHelper.*;
 public class MainRemote {
     public static void main(String[] args) throws MalformedURLException {
 
-        // Set up Chrome
-        Path currentPath = Paths.get("");
-        String chromeDriverPath = "src/main/resources/drivers/chromedriver.exe";
-        String absChromeDriverPath = currentPath.toAbsolutePath().toString() + "/" + chromeDriverPath;
-        System.out.println(absChromeDriverPath);
-        System.setProperty("webdriver.chrome.driver", absChromeDriverPath);
-        //ChromeDriver driver = new ChromeDriver();
+        RemoteWebDriver driver = loadBrowserSessionFromFileIfExists();
 
-        // Set up FF
-        String absFFDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/geckodriver.exe";
-        System.setProperty("webdriver.gecko.driver", absFFDriverPath);
-        //FirefoxDriver driver = new FirefoxDriver();
+        if (driver == null) {
+            // Set up Chrome
+            Path currentPath = Paths.get("");
+            String chromeDriverPath = "src/main/resources/drivers/chromedriver.exe";
+            String absChromeDriverPath = currentPath.toAbsolutePath().toString() + "/" + chromeDriverPath;
+            System.out.println(absChromeDriverPath);
+            System.setProperty("webdriver.chrome.driver", absChromeDriverPath);
+            //ChromeDriver webDriver = new ChromeDriver();
 
-        // Set up Edge
-        String absEdgeDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/msedgedriver.exe";
-        System.setProperty("webdriver.edge.driver", absEdgeDriverPath);
-        ChromeOptions options = new ChromeOptions();
-        options.setBinary("C:/Windows/SystemApps/Microsoft.MicrosoftEdge_8wekyb3d8bbwe/MicrosoftEdge.exe");
-        EdgeOptions edgeOptions = new EdgeOptions();
-        EdgeDriver driver = new EdgeDriver(edgeOptions);
+            // Set up FF
+            String absFFDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/geckodriver.exe";
+            System.setProperty("webdriver.gecko.driver", absFFDriverPath);
+            FirefoxDriver webDriver = new FirefoxDriver();
 
-        // Set up Opera
-        String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
-        System.setProperty("webdriver.opera.driver", absOperaDriverPath);
-       // OperaDriver driver = new OperaDriver();
+            // Set up Edge
+            String absEdgeDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/msedgedriver.exe";
+            System.setProperty("webdriver.edge.driver", absEdgeDriverPath);
+            ChromeOptions options = new ChromeOptions();
+            options.setBinary("C:/Windows/SystemApps/Microsoft.MicrosoftEdge_8wekyb3d8bbwe/MicrosoftEdge.exe");
+            EdgeOptions edgeOptions = new EdgeOptions();
+            //EdgeDriver webDriver = new EdgeDriver(edgeOptions);
 
-      //  HttpCommandExecutor executor = (HttpCommandExecutor) driver.getCommandExecutor();
+            // Set up Opera
+            String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
+            System.setProperty("webdriver.opera.driver", absOperaDriverPath);
+            //OperaDriver webDriver = new OperaDriver();
 
-      //  URL url = executor.getAddressOfRemoteServer();
-        URL url = getAddressOfRemoteServer(driver);
-       // SessionId sessionId = driver.getSessionId();
-        SessionId sessionId = getSessionId(driver);
+            //  HttpCommandExecutor executor = (HttpCommandExecutor) driver.getCommandExecutor();
 
-
-
-        System.out.println(url);
-        System.out.println(sessionId);
-       // System.out.println(getDriverBrowserName(driver));
+            //  URL url = executor.getAddressOfRemoteServer();
+            URL url = getAddressOfRemoteServer(webDriver);
+            // SessionId sessionId = driver.getSessionId();
+            SessionId sessionId = getSessionId(webDriver);
 
 
+            System.out.println(url);
+            System.out.println(sessionId);
+            // System.out.println(getDriverBrowserName(driver));
+            saveBrowserDataToFile(webDriver);
+            driver = webDriver;
+        }
 
 
-        RemoteWebDriver driver1 = createDriverFromSession(sessionId, url);
+
+
+       // RemoteWebDriver driver1 = createDriverFromSession(sessionId, url);
 
        // driver1.quit();
 
@@ -67,7 +68,8 @@ public class MainRemote {
        //System.out.println(driver.getSessionId());
 
 
-        driver1.get("http://www.google.com");
+        driver.get("http://www.google.com");
+        //driver.get("http://www.yahoo.com");
 
         try {
             Thread.sleep(3000);

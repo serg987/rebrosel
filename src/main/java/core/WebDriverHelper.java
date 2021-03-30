@@ -9,12 +9,32 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 
+
+
 public class WebDriverHelper {
-    public static RemoteWebDriver createDriverFromSession(final SessionId sessionId, URL command_executor){
+    public static void saveBrowserDataToFile(WebDriver driver) {
+        URL url = getAddressOfRemoteServer(driver);
+        SessionId sessionId = getSessionId(driver);
+        TempFileIO.createBrowserData(url, sessionId);
+        TempFileIO.saveBrowserConnData();
+    }
+
+    public static RemoteWebDriver loadBrowserSessionFromFileIfExists() {
+        TempFileIO.BrowserConnectionData browserData = TempFileIO.loadBrowserConnData();
+        if (browserData == null) return null;
+        return createDriverFromSession(browserData);
+    }
+
+    private static RemoteWebDriver createDriverFromSession(TempFileIO.BrowserConnectionData browserData) {
+        return createDriverFromSession(browserData.sessionId, browserData.remoteAddress);
+    }
+
+    private static RemoteWebDriver createDriverFromSession(final SessionId sessionId, URL command_executor){
         // the whole method is taken from https://tarunlalwani.com/post/reusing-existing-browser-session-selenium-java/
         // poster - TARUN LALWANI https://github.com/tarunlalwani
         CommandExecutor executor = new HttpCommandExecutor(command_executor) {
@@ -69,7 +89,7 @@ public class WebDriverHelper {
         T out = null;
         Method[] methods = driver.getClass().getMethods();
 
-        java.util.Optional<Method> invokingMethodOpt = Arrays.stream(methods).filter(method -> {
+        Optional<Method> invokingMethodOpt = Arrays.stream(methods).filter(method -> {
             String[] methodWords = method.getName().split("\\.");
             return methodWords[methodWords.length - 1].equals(methodName);
         }).findFirst();

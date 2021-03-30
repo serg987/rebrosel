@@ -92,6 +92,10 @@ class TempFileIO {
         }
     }
 
+    public static void createBrowserData(URL url, SessionId sessionId) {
+        createBrowserData(url.toString(), sessionId.toString());
+    }
+
     private static void createBrowserData(String urlStr, String sessionIdStr) {
         URL url = null;
         try {
