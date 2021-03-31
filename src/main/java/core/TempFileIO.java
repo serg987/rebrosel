@@ -1,5 +1,6 @@
 package core;
 
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.SessionId;
 
 import java.io.*;
@@ -7,8 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 class TempFileIO {
-
-    // public TempFileIO() {}; // needed for unit test invocation
 
     private static File tempFile;
     private static BrowserConnectionData browserData;
@@ -46,11 +45,13 @@ class TempFileIO {
 
         String urlStr = null;
         String sessionIdStr = null;
+        String browserName = null;
 
         try {
             reader = new BufferedReader(new FileReader(tempFile));
             urlStr = reader.readLine();
             sessionIdStr = reader.readLine();
+            browserName = reader.readLine();
         } catch (IOException e) {
             printError("read");
         } finally {
@@ -63,11 +64,8 @@ class TempFileIO {
             }
         }
 
-        createBrowserData(urlStr, sessionIdStr);
-        return browserData;
+        return createBrowserData(urlStr, sessionIdStr, browserName);
     }
-
-
 
     public static void saveBrowserConnData() {
         deleteTempFileIfExists();
@@ -79,6 +77,8 @@ class TempFileIO {
             writer.write(browserData.remoteAddress.toString());
             writer.newLine();
             writer.write(browserData.sessionId.toString());
+            writer.newLine();
+            writer.write(browserData.browserName);
         } catch (IOException e) {
             printError("write");
         } finally {
@@ -92,11 +92,7 @@ class TempFileIO {
         }
     }
 
-    public static void createBrowserData(URL url, SessionId sessionId) {
-        createBrowserData(url.toString(), sessionId.toString());
-    }
-
-    private static void createBrowserData(String urlStr, String sessionIdStr) {
+    public static BrowserConnectionData createBrowserData(String urlStr, String sessionIdStr, String browserName) {
         URL url = null;
         try {
             url = new URL(urlStr);
@@ -108,10 +104,13 @@ class TempFileIO {
         browserData = new BrowserConnectionData();
         browserData.remoteAddress = url;
         browserData.sessionId = sessionId;
+        browserData.browserName = browserName;
+
+        return browserData;
     }
 
     private static void printError(String action) {
-        System.out.println("FATAL ERROR! Could not " + action + " the temp file!");
+        LogHelper.logError("FATAL ERROR! Could not " + action + " the temp file!");
     }
 
     private static void deleteTempFileIfExists() {
@@ -123,5 +122,6 @@ class TempFileIO {
     static class BrowserConnectionData {
         URL remoteAddress;
         SessionId sessionId;
+        String browserName;
     }
 }

@@ -17,16 +17,16 @@ import java.util.Collections;
 
 
 public class WebDriverHelper {
-    public static void saveBrowserDataToFile(WebDriver driver) {
-        URL url = getAddressOfRemoteServer(driver);
-        SessionId sessionId = getSessionId(driver);
-        TempFileIO.createBrowserData(url, sessionId);
+    public static void saveBrowserDataToFile(RemoteWebDriver driver) {
+        getBrowserData(driver);
         TempFileIO.saveBrowserConnData();
     }
 
     public static RemoteWebDriver loadBrowserSessionFromFileIfExists() {
         TempFileIO.BrowserConnectionData browserData = TempFileIO.loadBrowserConnData();
         if (browserData == null) return null;
+        LogHelper.logMessage("Trying to connect to browser: " + browserData.browserName +
+                " session with url: " + browserData.remoteAddress + " and sessionID: " + browserData.sessionId);
         return createDriverFromSession(browserData);
     }
 
@@ -106,9 +106,17 @@ public class WebDriverHelper {
         return out;
     }
 
-    private static String getDriverBrowserName(WebDriver driver) {
-        return Arrays.stream(driver.getClass().getName().split("\\."))
-                .reduce((s1, s2) -> s2).get()
-                .replace("Driver", "");
+    private static String getDriverBrowserName(RemoteWebDriver driver) {
+        return driver.getCapabilities().getBrowserName();
+        //return Arrays.stream(driver.getClass().getName().split("\\."))
+          //      .reduce((s1, s2) -> s2).get()
+            //    .replace("Driver", "");
+    }
+
+    private static void getBrowserData(RemoteWebDriver driver) {
+        URL url = WebDriverHelper.getAddressOfRemoteServer(driver);
+        SessionId sessionId = WebDriverHelper.getSessionId(driver);
+        String browserName = WebDriverHelper.getDriverBrowserName(driver);
+        TempFileIO.createBrowserData(url.toString(), sessionId.toString(), browserName);
     }
 }

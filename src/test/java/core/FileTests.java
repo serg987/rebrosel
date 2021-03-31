@@ -4,13 +4,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileTests {
     private static final String testUrl = "http://localhost:12784";
     private static final String sessionID = "0871996af02bcf5a3ae3101caea8579a";
+    private static final String browserName = "chrome";
 
     @Before
     public void beforeTest() {
@@ -22,7 +22,7 @@ public class FileTests {
         TempFileIO tempFileIO = new TempFileIO();
 
         List<Object> parameters = new ArrayList<>();
-        parameters.add("Something");
+        parameters.add("do anything - it is a test of");
 
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "printError", parameters);
     }
@@ -33,6 +33,7 @@ public class FileTests {
         List<Object> parameters = new ArrayList<>();
         parameters.add(testUrl);
         parameters.add(sessionID);
+        parameters.add(browserName);
 
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "createBrowserData", parameters);
 
@@ -40,8 +41,10 @@ public class FileTests {
                 .invokePrivateMethod(tempFileIO, "getBrowserData", null);
         System.out.println("URL: " + data.remoteAddress.toString());
         System.out.println("SessionID: " + data.sessionId.toString());
-        Assert.assertTrue("URL is not as expected", data.remoteAddress.toString().equals(testUrl));
-        Assert.assertTrue("SessionID is not as expected", data.sessionId.toString().equals(sessionID));
+        System.out.println("BrowserName: " + data.browserName);
+        Assert.assertEquals("URL is not as expected", data.remoteAddress.toString(), testUrl);
+        Assert.assertEquals("SessionID is not as expected", data.sessionId.toString(), sessionID);
+        Assert.assertEquals("BrowserName is not as expected", data.browserName, browserName);
     }
 
     @Test
@@ -79,6 +82,7 @@ public class FileTests {
         List<Object> parameters = new ArrayList<>();
         parameters.add(testUrl);
         parameters.add(sessionID);
+        parameters.add(browserName);
 
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "createBrowserData", parameters);
 
@@ -99,6 +103,7 @@ public class FileTests {
         List<Object> parameters = new ArrayList<>();
         parameters.add(testUrl);
         parameters.add(sessionID);
+        parameters.add(browserName);
 
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "createBrowserData", parameters);
 
@@ -107,14 +112,18 @@ public class FileTests {
         TempFileIO.BrowserConnectionData data = TempFileIO.loadBrowserConnData();
         System.out.println("URL: " + data.remoteAddress.toString());
         System.out.println("SessionID: " + data.sessionId.toString());
-        Assert.assertTrue("URL is not as expected", data.remoteAddress.toString().equals(testUrl));
-        Assert.assertTrue("SessionID is not as expected", data.sessionId.toString().equals(sessionID));
+        System.out.println("BrowserName: " + data.browserName);
+        Assert.assertEquals("URL is not as expected", data.remoteAddress.toString(), testUrl);
+        Assert.assertEquals("SessionID is not as expected", data.sessionId.toString(), sessionID);
+        Assert.assertEquals("BrowserName is not as expected", data.browserName, browserName);
 
         String testUrlNew = testUrl + "/something/new";
         String sessionIDNew = sessionID + "new";
+        String browserNameNew = browserName + "new";
         parameters = new ArrayList<>();
         parameters.add(testUrlNew);
         parameters.add(sessionIDNew);
+        parameters.add(browserNameNew);
 
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "createBrowserData", parameters);
 
@@ -123,7 +132,9 @@ public class FileTests {
         data = TempFileIO.loadBrowserConnData();
         System.out.println("URL: " + data.remoteAddress.toString());
         System.out.println("SessionID: " + data.sessionId.toString());
-        Assert.assertTrue("URL is not as expected", data.remoteAddress.toString().equals(testUrlNew));
-        Assert.assertTrue("SessionID is not as expected", data.sessionId.toString().equals(sessionIDNew));
+        System.out.println("BrowserName: " + data.browserName);
+        Assert.assertEquals("URL is not as expected", data.remoteAddress.toString(), testUrlNew);
+        Assert.assertEquals("SessionID is not as expected", data.sessionId.toString(), sessionIDNew);
+        Assert.assertEquals("BrowserName is not as expected", data.browserName, browserNameNew);
     }
 }

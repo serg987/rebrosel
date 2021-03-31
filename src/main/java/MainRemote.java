@@ -1,6 +1,10 @@
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.*;
 
 import java.net.MalformedURLException;
@@ -27,7 +31,7 @@ public class MainRemote {
             // Set up FF
             String absFFDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/geckodriver.exe";
             System.setProperty("webdriver.gecko.driver", absFFDriverPath);
-            FirefoxDriver webDriver = new FirefoxDriver();
+            //FirefoxDriver webDriver = new FirefoxDriver();
 
             // Set up Edge
             String absEdgeDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/msedgedriver.exe";
@@ -40,7 +44,7 @@ public class MainRemote {
             // Set up Opera
             String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
             System.setProperty("webdriver.opera.driver", absOperaDriverPath);
-            //OperaDriver webDriver = new OperaDriver();
+            OperaDriver webDriver = new OperaDriver();
 
             //  HttpCommandExecutor executor = (HttpCommandExecutor) driver.getCommandExecutor();
 
@@ -55,6 +59,11 @@ public class MainRemote {
             // System.out.println(getDriverBrowserName(driver));
             saveBrowserDataToFile(webDriver);
             driver = webDriver;
+
+            //System.out.println(driver.getCapabilities().asMap());
+           // System.out.println(driver.getCapabilities().getPlatform());
+          //  System.out.println(driver.getCapabilities().getVersion());
+           // System.out.println(driver.getCapabilities().getBrowserName());
         }
 
 
