@@ -17,16 +17,29 @@ import java.util.Collections;
 
 
 public class WebDriverHelper {
+    private static TempFileIO.BrowserConnectionData browserData;
+
+    public static TempFileIO.BrowserConnectionData getLoadedBrowserDataFromFile() {
+        return browserData;
+    }
+
+    public static boolean isLoadedBrowserOpera() {
+        return browserData.browserName.equalsIgnoreCase("opera");
+    }
+
     public static void saveBrowserDataToFile(RemoteWebDriver driver) {
         getBrowserData(driver);
         TempFileIO.saveBrowserConnData();
     }
 
     public static RemoteWebDriver loadBrowserSessionFromFileIfExists() {
-        TempFileIO.BrowserConnectionData browserData = TempFileIO.loadBrowserConnData();
-        if (browserData == null) return null;
+        browserData = TempFileIO.loadBrowserConnData();
+        if (browserData == null) {
+            LogHelper.logMessage("No browserdata was stored. Will start new browser session.");
+            return null;
+        }
         LogHelper.logMessage("Trying to connect to browser: " + browserData.browserName +
-                " session with url: " + browserData.remoteAddress + " and sessionID: " + browserData.sessionId);
+                ". Session url: " + browserData.remoteAddress + "; sessionID: " + browserData.sessionId);
         return createDriverFromSession(browserData);
     }
 

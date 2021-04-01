@@ -85,6 +85,7 @@ class TempFileIO {
             try {
                 if (writer != null) {
                     writer.close();
+                    LogHelper.logMessage("Browser connection data was saved.");
                 }
             } catch (IOException e) {
                 printError("write");

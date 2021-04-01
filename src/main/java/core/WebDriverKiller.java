@@ -10,39 +10,54 @@ import static core.EnvironmentVariables.IS_MAC;
 
 public class WebDriverKiller {
 
-    public static void killWebDriver(TempFileIO.BrowserConnectionData browserData) {
-        if (IS_WINDOWS) {
-            killWebDriverInWindows(browserData);
-        } else if (IS_MAC) {
-            killWebDriverInMac(browserData);
+    public static void killWebDriver() {
+        TempFileIO.BrowserConnectionData browserData = WebDriverHelper.getLoadedBrowserDataFromFile();
+        if (browserData != null) {
+            killWebDriver(browserData);
+        } else {
+            LogHelper.logMessage("No browser data was loaded from file. No webdriver to kill.");
         }
     }
 
-    private static void killWebDriverInWindows(TempFileIO.BrowserConnectionData browserData) {
+    public static void killWebDriver(TempFileIO.BrowserConnectionData browserData) {
+        boolean waskilled = true;
+        if (IS_WINDOWS) {
+            waskilled = killWebDriverInWindows(browserData);
+        } else if (IS_MAC) {
+            waskilled = killWebDriverInMac(browserData);
+        }
+        if (!waskilled) LogHelper.logMessage("No process was found handling webdriver port. Nothing to kill.");
+    }
+
+    private static boolean killWebDriverInWindows(TempFileIO.BrowserConnectionData browserData) {
         String port = Arrays.stream(browserData.remoteAddress.toString().split(":"))
                 .reduce((a, b) -> b).orElse("99999");
-        System.out.println("Port: " + port);
         String portToFind = ":" + port;
         String webDriverProcess = executeCommandAndFindStringContains("netstat -ano", portToFind);
-        System.out.println("Found process: " + webDriverProcess);
         if (!webDriverProcess.isEmpty()) {
             String pid = Arrays.stream(webDriverProcess.split(" ")).reduce((a, b) -> b).orElse("");
-            System.out.println("PID: " + pid);
+            LogHelper.logMessage("Found process with PID=" + pid + " handling port " + port
+                    + ". Will kill it.");
             executeCommandAndFindStringContains("taskkill /F /PID " + pid, "");
+            return true;
         }
+        return false;
     }
 
-    private static void killWebDriverInMac(TempFileIO.BrowserConnectionData browserData) {
-
+    private static boolean killWebDriverInMac(TempFileIO.BrowserConnectionData browserData) {
+        return false;
     }
 
     public static boolean isOperaBrowserWorking() {
+        boolean isWorking = false;
         if (IS_WINDOWS) {
-            return isOperaBrowserWorkingInWindows();
+            isWorking = isOperaBrowserWorkingInWindows();
         } else if (IS_MAC) {
-           return isOperaBrowserWorkingInMac();
+           isWorking = isOperaBrowserWorkingInMac();
         }
-        return false;
+        if (!isWorking) LogHelper.logMessage("Opera browser was not found as working. Will restart it.");
+
+        return isWorking;
     }
 
     private static boolean isOperaBrowserWorkingInWindows() {
