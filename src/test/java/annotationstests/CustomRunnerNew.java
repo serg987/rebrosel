@@ -25,7 +25,7 @@ public class CustomRunnerNew extends BlockJUnit4ClassRunner {
     }
     @Override
     protected Statement withBeforeClasses(Statement statement)  {
-        System.out.println("New added before Class )))");
+       // System.out.println("New added before Class )))");
       //  statement = initializeFramework();
 
 
@@ -44,6 +44,7 @@ public class CustomRunnerNew extends BlockJUnit4ClassRunner {
         TestClass testClass = getTestClass();
         verifyBrowserInitializationMethod(testClass);
         verifyOnStartBrowserMethod(testClass);
+        verifyWebDriverField(testClass);
     }
 
     private Statement initializeFramework() {
@@ -53,7 +54,6 @@ public class CustomRunnerNew extends BlockJUnit4ClassRunner {
         FrameworkMethod onStartBrowserMethod = verifyAndGetOnStartBrowserMethod(testClass);
         Statement statement = invokeStaticMethod(testClass, browserInitMethod);
         statement = invokeStaticMethod(testClass, onStartBrowserMethod);
-        verifyWebDriverField(testClass);
         //setWebDriverField(testClass, "aaaa");
         return statement;
     }
@@ -125,24 +125,35 @@ public class CustomRunnerNew extends BlockJUnit4ClassRunner {
         if (method.getMethod().getParameterTypes().length > 0) {
             errors.add("have no arguments");
         }
+        throwError(builder, errors);
+    }
+
+    private void verifyWebDriverField(TestClass clazz) throws InitializationError {
+        List<FrameworkField> fields = clazz.getAnnotatedFields(RebroselWebDriver.class);
+        if (fields.isEmpty()) throw
+                new InitializationError("No fields annotated with @RebroselWebDriver found.");
+        if (fields.size() > 1) throw
+                new InitializationError("Only one field annotated with Annotation " +
+                        "@RebroselWebDriver is allowed.");
+        Field field = fields.get(0).getField();
+        Class fieldClass = field.getType();
+        StringBuilder builder = new StringBuilder("Fields annotated with @RebroselWebDriver should");
+        List<String> errors = new ArrayList<>();
+        int modifier = field.getModifiers();
+        if (!Modifier.isStatic(modifier)) errors.add("be static");
+        if (fieldClass != String.class) errors.add("be a String class");
+        throwError(builder, errors);
+    }
+
+    private void throwError(StringBuilder error, List<String> errors) throws InitializationError {
         if (!errors.isEmpty()) {
             Iterator<String> iterator = errors.iterator();
             while (iterator.hasNext()) {
-                builder.append(" ").append(iterator.next()).append(iterator.hasNext() ? "," : ".");
+                error.append(" ").append(iterator.next()).append(iterator.hasNext() ? "," : ".");
             }
-            throw new InitializationError(builder.toString());
+            throw new InitializationError(error.toString());
         }
     }
-
-    private void verifyWebDriverField(TestClass clazz) {
-        List<FrameworkField> fields = clazz.getAnnotatedFields(RebroselWebDriver.class);
-        if (fields.isEmpty()) System.out.println("No fields annotated with @RebroselWebDriver found.");
-        if (fields.size() > 1) System.out.println("Only one field annotated with Annotation @RebroselWebDriver is allowed.");
-        Field field = fields.get(0).getField();
-        int modifier = field.getModifiers();
-        if (!Modifier.isStatic(modifier)) System.out.println("Fields annotated with @RebroselWebDriver should be static.");
-    }
-
 
     private void setWebDriverField(TestClass clazz, String str) {
         Field field = clazz.getAnnotatedFields(RebroselWebDriver.class).get(0).getField();
