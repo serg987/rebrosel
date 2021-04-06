@@ -4,10 +4,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
 
 @RunWith(CustomRunnerNew.class)
 public class CustomRunnerTest {
+   // static String driver;
     @RebroselWebDriver
     static String driver;
 
@@ -25,7 +25,7 @@ public class CustomRunnerTest {
         return "Browser Started";
     }
 
-    @BeforeClass
+   @BeforeClass
     public static void beforeClassInChild() {
         System.out.println("driver: " + driver);
         System.out.println("BeforeClass in Child");
