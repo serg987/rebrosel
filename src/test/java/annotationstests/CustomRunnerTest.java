@@ -25,10 +25,10 @@ public class CustomRunnerTest {
         return "Browser Started";
     }
 
-   @BeforeClass
-    public static void beforeClassInChild() {
+    @BeforeClass
+    public static void beforeClass() {
         System.out.println("driver: " + driver);
-        System.out.println("BeforeClass in Child");
+        System.out.println("BeforeClass");
     }
 
     @Before

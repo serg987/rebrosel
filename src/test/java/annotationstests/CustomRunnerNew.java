@@ -26,7 +26,14 @@ public class CustomRunnerNew extends BlockJUnit4ClassRunner {
     @Override
     protected Statement withBeforeClasses(Statement statement)  {
        // System.out.println("New added before Class )))");
-      //  statement = initializeFramework();
+        //statement =
+        initializeFramework();
+
+        try {
+            throw new IllegalArgumentException("aaaa");
+        } catch (IllegalArgumentException e) {
+            statement = new Fail(e);
+        }
 
 
 /*        List<FrameworkMethod> initializationMethod = getTestClass()
@@ -50,12 +57,13 @@ public class CustomRunnerNew extends BlockJUnit4ClassRunner {
     private Statement initializeFramework() {
         System.out.println("Initializing framework...");
         TestClass testClass = getTestClass();
-        FrameworkMethod browserInitMethod = verifyAndGetBrowserInitializationMethod(testClass);
-        FrameworkMethod onStartBrowserMethod = verifyAndGetOnStartBrowserMethod(testClass);
-        Statement statement = invokeStaticMethod(testClass, browserInitMethod);
-        statement = invokeStaticMethod(testClass, onStartBrowserMethod);
+        FrameworkMethod browserInitMethod = testClass.getAnnotatedMethods(BrowserInitialization.class).get(0);
+        List<FrameworkMethod> onStartBrowserMethods = testClass.getAnnotatedMethods(OnBrowserStart.class);
+        FrameworkMethod onStartBrowserMethod = onStartBrowserMethods.size() > 0 ? onStartBrowserMethods.get(0) : null;
+        //Statement statement = invokeStaticMethod(testClass, browserInitMethod);
+        //statement = invokeStaticMethod(testClass, onStartBrowserMethod);
         //setWebDriverField(testClass, "aaaa");
-        return statement;
+        return null;
     }
 
     private void verifyBrowserInitializationMethod(TestClass clazz) throws InitializationError {
@@ -74,39 +82,6 @@ public class CustomRunnerNew extends BlockJUnit4ClassRunner {
                 new InitializationError("Only one method annotated with Annotation " +
                         "@BrowserInitialization is allowed.");
         if (!methods.isEmpty()) verifyMethodPublicStaticNoArgsReturnsString(methods.get(0));
-    }
-
-
-    private FrameworkMethod verifyAndGetBrowserInitializationMethod(TestClass clazz) {
-        List<FrameworkMethod> methods = clazz.getAnnotatedMethods(BrowserInitialization.class);
-        if (methods.isEmpty()) System.out.println("No methods annotated with @BrowserInitialization found.");
-        if (methods.size() > 1) System.out.println("Only one method annotated with Annotation @BrowserInitialization is allowed.");
-        FrameworkMethod method = methods.get(0);
-        boolean isMethodProper = isMethodPublicStaticReturnsString(method.getMethod());
-        return isMethodProper ? method : null;
-    }
-
-    private FrameworkMethod verifyAndGetOnStartBrowserMethod(TestClass clazz) {
-        List<FrameworkMethod> methods = clazz.getAnnotatedMethods(OnBrowserStart.class);
-        if (methods.size() > 1) System.out.println("Only one method annotated with Annotation @OnBrowserStart is allowed.");
-        if (methods.isEmpty()) return null;
-        FrameworkMethod method = methods.get(0);
-        boolean isMethodProper = isMethodPublicStaticReturnsString(method.getMethod());
-        return isMethodProper ? method : null;
-    }
-
-    private boolean isMethodPublicStaticReturnsString(Method method) {
-        int modifier =  method.getModifiers();
-        if (!Modifier.isStatic(modifier)) {
-            System.out.println("Method '" + method.getName() + "' should be static");
-        }
-        if (!Modifier.isPublic(modifier)) {
-            System.out.println("Method '" + method.getName() + "' should be public");
-        }
-        if (!method.getReturnType().equals(String.class)) {
-            System.out.println("Method '" + method.getName() + "' should return String");
-        }
-        return true;
     }
 
     private void verifyMethodPublicStaticNoArgsReturnsString(FrameworkMethod method) throws InitializationError {
