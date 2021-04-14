@@ -7,5 +7,6 @@
 - ~~check if the new browser is not the same as was stored and then start a new one.~~ - no need to, it will connect to the last opened and stored webdriver
 - ~~make browser methods executable~~  - done
 - move draft of the runner to actual framework and adapt it
+  - check if native JUnit methods (@BeforeX, @Test, etc) verification is not broken by local validate(); 
 - fill statements - statement should be changed only if something happened
 - interrupt test execution on errors in initialization
