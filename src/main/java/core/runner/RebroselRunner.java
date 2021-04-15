@@ -1,6 +1,7 @@
 package core.runner;
 
 import core.LogHelper;
+import core.WebDriverKiller;
 import core.annotations.BrowserInitialization;
 import core.annotations.OnBrowserStart;
 import core.annotations.RebroselWebDriver;
@@ -8,14 +9,25 @@ import org.junit.internal.runners.statements.Fail;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.*;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.UnreachableBrowserException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import static core.WebDriverHelper.*;
+
 public class RebroselRunner extends BlockJUnit4ClassRunner {
+
+    private static WebDriver webDriver;
+    private static TestClass testClass;
+    private static FrameworkMethod browserInitMethod;
+    private static FrameworkMethod onStartBrowserMethod;
 
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
@@ -29,7 +41,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     }
 
     @Override
-    protected Statement withBeforeClasses(Statement statement)  {
+    protected Statement withBeforeClasses(Statement statement) {
         Statement initializationStatement = initializeFramework();
 
         if (initializationStatement != null) return initializationStatement;
@@ -38,9 +50,9 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     }
 
     private void validate() throws InitializationError {
-        List<Throwable> errors = new ArrayList<Throwable>();
+        List<Throwable> errors = new ArrayList<>();
 
-        TestClass testClass = getTestClass();
+        testClass = getTestClass();
         verifyOnStartBrowserMethod(testClass, errors);
         verifyBrowserInitializationMethod(testClass, errors);
         verifyWebDriverField(testClass, errors);
@@ -53,13 +65,15 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     private Statement initializeFramework() {
         LogHelper.logMessage("Initializing framework...");
         TestClass testClass = getTestClass();
-        FrameworkMethod browserInitMethod = testClass.getAnnotatedMethods(BrowserInitialization.class).get(0);
+        browserInitMethod = testClass.getAnnotatedMethods(BrowserInitialization.class).get(0);
         List<FrameworkMethod> onStartBrowserMethods = testClass.getAnnotatedMethods(OnBrowserStart.class);
-        FrameworkMethod onStartBrowserMethod = onStartBrowserMethods.size() > 0 ? onStartBrowserMethods.get(0) : null;
+        onStartBrowserMethod = onStartBrowserMethods.size() > 0 ? onStartBrowserMethods.get(0) : null;
+
+        return setInitializedWebDriver();
+
         //Statement statement = invokeStaticMethod(testClass, browserInitMethod);
         //statement = invokeStaticMethod(testClass, onStartBrowserMethod);
         //setWebDriverField(testClass, "aaaa");
-        return null;
     }
 
     private void verifyBrowserInitializationMethod(TestClass clazz, List<Throwable> errors) {
@@ -79,7 +93,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
 
     private void verifyMethodPublicStaticNoArgsReturnsWebDriver(FrameworkMethod method,
                                                                 List<Throwable> errors) {
-        int modifier =  method.getMethod().getModifiers();
+        int modifier = method.getMethod().getModifiers();
         StringBuilder builder = new StringBuilder("Method '" + method.getName() + "' should");
         List<String> errorStrings = new ArrayList<>();
         if (!Modifier.isStatic(modifier)) {
@@ -102,7 +116,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         List<FrameworkField> fields = clazz.getAnnotatedFields(RebroselWebDriver.class);
         if (fields.isEmpty()) errors.add(new Exception("No fields annotated with @RebroselWebDriver found."));
         if (fields.size() > 1) errors.add(new Exception("Only one field annotated with Annotation " +
-                        "@RebroselWebDriver is allowed."));
+                "@RebroselWebDriver is allowed."));
         if (fields.size() == 1) {
             Field field = fields.get(0).getField();
             Class fieldClass = field.getType();
@@ -127,33 +141,96 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private void setWebDriverField(TestClass clazz, WebDriver driver) {
+    private static Statement setWebDriverField(TestClass clazz, WebDriver driver) {
         Field field = clazz.getAnnotatedFields(RebroselWebDriver.class).get(0).getField();
         boolean defaultAccessible = field.isAccessible();
         field.setAccessible(true);
         try {
             field.set(clazz.getJavaClass().newInstance(), driver);
         } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
+            return new Fail(e);
         }
         field.setAccessible(defaultAccessible);
+
+        return null;
     }
 
-    private Statement setWebDriverAndInvokeStaticMethod(TestClass clazz, FrameworkMethod method) {
+    private static Statement killWebdriverAndRestartBrowser() {
+        WebDriverKiller.killWebDriver();
+        Statement statement = restartBrowserAndDoOnStart();
+        saveBrowserDataToFile((RemoteWebDriver) webDriver);
+        return statement;
+    }
+
+    private static Statement restartBrowserAndDoOnStart() {
         Object obj;
         try {
-            obj = method.getDeclaringClass().newInstance();
+            obj = browserInitMethod.getDeclaringClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             return new Fail(e);
         }
-        WebDriver driver;
         try {
-            driver = (WebDriver) method.getMethod().invoke(obj);
+            webDriver = (WebDriver) browserInitMethod.getMethod().invoke(obj);
         } catch (IllegalArgumentException | ReflectiveOperationException e) {
             return new Fail(e);
         }
-        setWebDriverField(clazz, driver);
+        Statement statement = setWebDriverField(testClass, webDriver);
+        if (onStartBrowserMethod != null) {
+            try {
+                onStartBrowserMethod.getMethod().invoke(obj);
+            } catch (IllegalArgumentException | ReflectiveOperationException e) {
+                return new Fail(e);
+            }
+        }
 
-        return methodInvoker(method, obj);
+        return statement;
+    }
+
+    private static Statement setInitializedWebDriver() {
+        Statement statement = null;
+
+        webDriver = loadBrowserSessionFromFileIfExists();
+
+        // Opera webdriver doesn't throw any exception if browser is not working
+        // so it should be treated differently
+        if (webDriver == null || (isLoadedBrowserOpera() && !WebDriverKiller.isOperaBrowserWorking())) {
+            statement = killWebdriverAndRestartBrowser();
+            if (statement != null) return statement;
+        }
+
+        boolean isBrowserKilled = false;
+
+        // Trying to get whether other browsers are working by catching exceptions from their webdrivers.
+        try {
+            webDriver.getCurrentUrl();
+        } catch (UnreachableBrowserException e) {
+            LogHelper.logMessage("Webdriver is not reachable.");
+            isBrowserKilled = true;
+        } catch (WebDriverException e) {
+            String message = Arrays.stream(e.getMessage().split("\\n")).findFirst().orElse("");
+            isBrowserKilled = message.equalsIgnoreCase("chrome not reachable")
+                    || message.equalsIgnoreCase("Failed to decode response from marionette")
+                    || message.equalsIgnoreCase("Failed to write request to stream")
+                    || (e.getClass().getCanonicalName().contains("NoSuchSessionException")
+                    && message
+                    .equalsIgnoreCase("Tried to run command without establishing a connection"));
+            if (!isBrowserKilled) throw e;
+        }
+
+        if (isBrowserKilled) {
+            LogHelper.logMessage("Will start a new browser session");
+            statement = killWebdriverAndRestartBrowser();
+        }
+
+        if (statement == null) {
+            statement = setWebDriverField(testClass, webDriver);
+        }
+
+        if (statement == null) {
+            LogHelper.logMessage("Framework initialization is done. You can continue to work.");
+        } else {
+            LogHelper.logError("Framework initialization is failed.");
+        }
+        return statement;
     }
 }

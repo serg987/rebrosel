@@ -6,8 +6,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.opera.OperaDriver;
 
 import java.nio.file.Path;
@@ -45,7 +48,8 @@ public class MainRebrosel {
         // Set up Opera
         String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
         System.setProperty("webdriver.opera.driver", absOperaDriverPath);
-        return new OperaDriver();
+        OperaDriver webDriver = new OperaDriver();
+        return webDriver;
     }
 
     @OnBrowserStart
@@ -70,5 +74,10 @@ public class MainRebrosel {
     public void test() {
         System.out.println("driver: " + driver);
         System.out.println("Test");
+    }
+
+    @Test
+    public void test2() {
+        driver.get("http://www.yahoo.com");
     }
 }
