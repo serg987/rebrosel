@@ -21,8 +21,13 @@ import static core.WebDriverHelper.*;
 
 public class MainRemote {
     private static RemoteWebDriver initializeWebDriver() {
-        // Set up Chrome
         Path currentPath = Paths.get("");
+        // Set up Opera
+        String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
+        System.setProperty("webdriver.opera.driver", absOperaDriverPath);
+        OperaDriver webDriver = new OperaDriver();
+
+        // Set up Chrome
         String chromeDriverPath = "src/main/resources/drivers/chromedriver.exe";
         String absChromeDriverPath = currentPath.toAbsolutePath().toString() + "/" + chromeDriverPath;
         System.out.println(absChromeDriverPath);
@@ -42,10 +47,7 @@ public class MainRemote {
         EdgeOptions edgeOptions = new EdgeOptions();
         //EdgeDriver webDriver = new EdgeDriver(edgeOptions);
 
-        // Set up Opera
-        String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
-        System.setProperty("webdriver.opera.driver", absOperaDriverPath);
-        OperaDriver webDriver = new OperaDriver();
+
 
         //  HttpCommandExecutor executor = (HttpCommandExecutor) driver.getCommandExecutor();
 

@@ -24,8 +24,9 @@ public class MainRebrosel {
 
     @BrowserInitialization
     public static WebDriver browserInit() {
-        // Set up Chrome
         Path currentPath = Paths.get("");
+
+        // Set up Chrome
         String chromeDriverPath = "src/main/resources/drivers/chromedriver.exe";
         String absChromeDriverPath = currentPath.toAbsolutePath().toString() + "/" + chromeDriverPath;
         System.out.println(absChromeDriverPath);
@@ -35,7 +36,7 @@ public class MainRebrosel {
         // Set up FF
         String absFFDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/geckodriver.exe";
         System.setProperty("webdriver.gecko.driver", absFFDriverPath);
-        //FirefoxDriver webDriver = new FirefoxDriver();
+        FirefoxDriver webDriver = new FirefoxDriver();
 
         // Set up Edge
         String absEdgeDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/msedgedriver.exe";
@@ -48,7 +49,8 @@ public class MainRebrosel {
         // Set up Opera
         String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
         System.setProperty("webdriver.opera.driver", absOperaDriverPath);
-        OperaDriver webDriver = new OperaDriver();
+        //OperaDriver webDriver = new OperaDriver();
+
         return webDriver;
     }
 
