@@ -14,6 +14,8 @@
 ~~- fill statements - statement should be changed only if something happened~~ - Done 
 ~~- interrupt test execution on errors in initialization~~ - Done
 - Intellij offers to execute methods with custom annotations
-- Check how to handle if one browser is working, but it is needed to open another one. Open both and store data for all 
-  available???
-- change saving the file method - all-at-once and assuming ^^^ is true 
+  ~~- Check how to handle if one browser is working, but it is needed to open another one. Open both and store data for all
+  available???~~ - NOT IMPLEMENTED  - no easy way to figure out what driver is requested to launch unless it is launched
+~~- change saving the file method - all-at-once and assuming ^^^ is true~~ - won't fix
+~~- failed local tests are green even on failure~~ - Done
+- figure out why tempfile is rewritten with empty browser name

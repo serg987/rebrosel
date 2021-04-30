@@ -34,7 +34,7 @@ public class WebDriverHelper {
 
     public static RemoteWebDriver loadBrowserSessionFromFileIfExists() {
         browserData = TempFileIO.loadBrowserConnData();
-        if (browserData == null) {
+        if (browserData == null || browserData.browserName == "null") {
             LogHelper.logMessage("No browserdata was stored. Will start new browser session.");
             return null;
         }
@@ -119,17 +119,12 @@ public class WebDriverHelper {
         return out;
     }
 
-    private static String getDriverBrowserName(RemoteWebDriver driver) {
-        return driver.getCapabilities().getBrowserName();
-        //return Arrays.stream(driver.getClass().getName().split("\\."))
-          //      .reduce((s1, s2) -> s2).get()
-            //    .replace("Driver", "");
-    }
-
     private static void getBrowserData(RemoteWebDriver driver) {
         URL url = WebDriverHelper.getAddressOfRemoteServer(driver);
         SessionId sessionId = WebDriverHelper.getSessionId(driver);
-        String browserName = WebDriverHelper.getDriverBrowserName(driver);
-        TempFileIO.createBrowserData(url.toString(), sessionId.toString(), browserName);
+        String browserName = driver.getCapabilities().getBrowserName();
+        TempFileIO.createBrowserData(url.toString(),
+                sessionId.toString(),
+                (browserName.isEmpty()) ? "null" : browserName);
     }
 }

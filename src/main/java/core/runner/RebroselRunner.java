@@ -211,9 +211,10 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
             isBrowserKilled = message.equalsIgnoreCase("chrome not reachable")
                     || message.equalsIgnoreCase("Failed to decode response from marionette")
                     || message.equalsIgnoreCase("Failed to write request to stream")
-                    || (e.getClass().getCanonicalName().contains("NoSuchSessionException")
-                    && message
-                    .equalsIgnoreCase("Tried to run command without establishing a connection"));
+                    || ((e.getClass().getCanonicalName().contains("NoSuchSessionException")
+                    && (message
+                    .equalsIgnoreCase("Tried to run command without establishing a connection"))
+                    || message.equalsIgnoreCase("invalid session id")));
             if (!isBrowserKilled) throw e;
         }
 
