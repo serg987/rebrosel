@@ -18,4 +18,10 @@
   available???~~ - NOT IMPLEMENTED  - no easy way to figure out what driver is requested to launch unless it is launched
 ~~- change saving the file method - all-at-once and assuming ^^^ is true~~ - won't fix
 ~~- failed local tests are green even on failure~~ - Done
-- figure out why tempfile is rewritten with empty browser name
+- figure out why tempfile is rewritten with empty browser name (try with a wrong webdriver)
+  - kill WebDriver if initializing Browser was not successfull
+- Do not save file if browser is not running
+- Try to get what browser is connected with RemoteWebDriver if it is possible then it is possible to kill it and 
+restart a proper one
+- test @OnBrowserStart
+- Test with deleting files (kill WebDriver before deleting the file)

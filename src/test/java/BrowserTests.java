@@ -38,5 +38,13 @@ public class BrowserTests {
                 junit.run(browserTests.EdgeRestartTest.class).wasSuccessful());
     }
 
+    @Test
+    public void opera() {
+        Assert.assertTrue("Test was not successful",
+                junit.run(browserTests.OperaStartTest.class).wasSuccessful());
+        Assert.assertTrue("Test was not successful",
+                junit.run(browserTests.OperaRestartTest.class).wasSuccessful());
+    }
+
     //TODO make the same for opera
 }
