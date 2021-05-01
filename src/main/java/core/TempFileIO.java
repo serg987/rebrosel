@@ -1,13 +1,12 @@
 package core;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.SessionId;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-class TempFileIO {
+public class TempFileIO {
 
     private static File tempFile;
     private static BrowserConnectionData browserData;

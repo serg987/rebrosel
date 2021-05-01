@@ -28,8 +28,10 @@ public class WebDriverHelper {
     }
 
     public static void saveBrowserDataToFile(RemoteWebDriver driver) {
-        getBrowserData(driver);
-        TempFileIO.saveBrowserConnData();
+        if (driver != null) {
+            getBrowserData(driver);
+            TempFileIO.saveBrowserConnData();
+        }
     }
 
     public static RemoteWebDriver loadBrowserSessionFromFileIfExists() {

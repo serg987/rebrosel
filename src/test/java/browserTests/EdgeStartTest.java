@@ -60,5 +60,9 @@ public class EdgeStartTest {
         Assert.assertTrue("Url does not have expected part: " + expectedToInclude,
                 driver.getCurrentUrl().contains(expectedToInclude));
     }
+
+    public static void killWebDriver() {
+        driver.quit();
+    }
 }
 

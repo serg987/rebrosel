@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+
 @RunWith(core.runner.RebroselRunner.class)
 public class ChromeRestartTest {
 

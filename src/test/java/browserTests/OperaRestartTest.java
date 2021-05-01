@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 @RunWith(core.runner.RebroselRunner.class)
 public class OperaRestartTest {
@@ -25,8 +24,6 @@ public class OperaRestartTest {
         String expectedToInclude = "https://www.google.com/gmail/";
         Assert.assertTrue("Url does not have expected part: " + expectedToInclude,
                 driver.getCurrentUrl().contains(expectedToInclude));
-        RemoteWebDriver remoteWebDriver = (RemoteWebDriver) driver;
-        System.out.println("Browser: '" + remoteWebDriver.getCapabilities().getBrowserName() + "'");
         driver.quit();
     }
 }

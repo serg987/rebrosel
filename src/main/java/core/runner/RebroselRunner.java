@@ -24,10 +24,11 @@ import static core.WebDriverHelper.*;
 
 public class RebroselRunner extends BlockJUnit4ClassRunner {
 
-    private static WebDriver webDriver;
-    private static TestClass testClass;
-    private static FrameworkMethod browserInitMethod;
-    private static FrameworkMethod onStartBrowserMethod;
+    private WebDriver webDriver;
+    private TestClass testClass;
+    private FrameworkMethod browserInitMethod;
+    private FrameworkMethod onStartBrowserMethod;
+    private boolean isErrorInInitialization = false;
 
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
@@ -43,10 +44,23 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     @Override
     protected Statement withBeforeClasses(Statement statement) {
         Statement initializationStatement = initializeFramework();
-
-        if (initializationStatement != null) return initializationStatement;
+        isErrorInInitialization = initializationStatement != null;
+        if (isErrorInInitialization) {
+            return initializationStatement;
+        }
 
         return super.withBeforeClasses(statement);
+    }
+
+    /**
+     *
+     * Prevent {@code @AfterClass} from execution if there was an error in initialization
+     * (both in {@code @BrowserInitialization} and {@code @OnBrowserStart}
+     */
+    @Override
+    protected Statement withAfterClasses(Statement statement) {
+        if (!isErrorInInitialization) return super.withAfterClasses(statement);
+        return statement;
     }
 
     private void validate() throws InitializationError {
@@ -58,6 +72,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         verifyWebDriverField(testClass, errors);
 
         if (!errors.isEmpty()) {
+            isErrorInInitialization = true;
             throw new InitializationError(errors);
         }
     }
@@ -68,9 +83,9 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         browserInitMethod = testClass.getAnnotatedMethods(BrowserInitialization.class).get(0);
         List<FrameworkMethod> onStartBrowserMethods = testClass.getAnnotatedMethods(OnBrowserStart.class);
         onStartBrowserMethod = onStartBrowserMethods.size() > 0 ? onStartBrowserMethods.get(0) : null;
+        Statement statement = setInitializedWebDriver(); // TODO check the flow - now if browser is definitely just started, it checks for the browser again
 
-        return setInitializedWebDriver(); // TODO check the flow - now if browser is definitely just started, it checks for the browser again
-
+        return statement;
         //Statement statement = invokeStaticMethod(testClass, browserInitMethod);
         //statement = invokeStaticMethod(testClass, onStartBrowserMethod);
         //setWebDriverField(testClass, "aaaa");
@@ -155,14 +170,14 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         return null;
     }
 
-    private static Statement killWebdriverAndRestartBrowser() {
+    private Statement killWebdriverAndRestartBrowser() {
         WebDriverKiller.killWebDriver();
         Statement statement = restartBrowserAndDoOnStart();
         saveBrowserDataToFile((RemoteWebDriver) webDriver);
         return statement;
     }
 
-    private static Statement restartBrowserAndDoOnStart() {
+    private Statement restartBrowserAndDoOnStart() {
         Object obj;
         try {
             obj = browserInitMethod.getDeclaringClass().newInstance();
@@ -186,7 +201,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         return statement;
     }
 
-    private static Statement setInitializedWebDriver() {
+    private Statement setInitializedWebDriver() {
         Statement statement = null;
 
         webDriver = loadBrowserSessionFromFileIfExists();
@@ -195,14 +210,16 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         // so it should be treated differently
         if (webDriver == null || (isLoadedBrowserOpera() && !WebDriverKiller.isOperaBrowserWorking())) {
             statement = killWebdriverAndRestartBrowser();
-            if (statement != null) return statement;
+            if (statement != null) {
+                return statement;
+            }
         }
 
         boolean isBrowserKilled = false;
 
         // Trying to get whether other browsers are working by catching exceptions from their webdrivers.
         try {
-            webDriver.getCurrentUrl();
+            if (webDriver != null) webDriver.getCurrentUrl();
         } catch (UnreachableBrowserException e) {
             LogHelper.logMessage("Webdriver is not reachable.");
             isBrowserKilled = true;
