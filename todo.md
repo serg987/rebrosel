@@ -14,7 +14,7 @@
   
 - move draft of the runner to actual framework and adapt it - WIP
   
-- change the flow - now if browser is definitely just started, it checks??? for the browser again
+~~- change the flow - now if browser is definitely just started, it checks??? for the browser again~~ - Done
 
 ~~- BUG: something wrong with Opera initialization~~ - Done; just wrong webdriver version
   
@@ -37,9 +37,10 @@ tests has been written
   
 ~~- failed local tests are green even on failure~~ - Done
   
-- figure out why tempfile is rewritten with empty browser name (try with a wrong webdriver)
-  - kill WebDriver if initializing Browser was not successful
-  - Do not save file if browser is not running
+~~- figure out why tempfile is rewritten with empty browser name (try with a wrong webdriver)~~ - Done/won't fix
+  ~~- kill WebDriver if initializing Browser was not successful~~ - is not possible. WebDriver is not initialized to 
+  get port and Webdriver exec writes to process console, so cannot get it even from there
+  ~~- Do not save file if browser is not running~~ - Done
   
 ~~- Try to get what browser is connected with RemoteWebDriver if it is possible then it is possible to kill it and 
 restart a proper one~~ - Didn't find a way

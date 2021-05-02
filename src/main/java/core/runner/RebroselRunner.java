@@ -84,7 +84,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         browserInitMethod = testClass.getAnnotatedMethods(BrowserInitialization.class).get(0);
         List<FrameworkMethod> onStartBrowserMethods = testClass.getAnnotatedMethods(OnBrowserStart.class);
         onStartBrowserMethod = onStartBrowserMethods.size() > 0 ? onStartBrowserMethods.get(0) : null;
-        Statement statement = setInitializedWebDriver(); // TODO check the flow - now if browser is definitely just started, it checks for the browser again
+        Statement statement = setInitializedWebDriver();
 
         return statement;
     }
