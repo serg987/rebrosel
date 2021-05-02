@@ -1,4 +1,5 @@
 import core.LogHelper;
+import core.TempFileIO;
 import core.WebDriverKiller;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
@@ -103,7 +104,7 @@ public class MainRemote {
     private static RemoteWebDriver killWebdriverAndRestartBrowser() {
         WebDriverKiller.killWebDriver();
         RemoteWebDriver driver = initializeWebDriver();
-        saveBrowserDataToFile(driver);
+        TempFileIO.saveBrowserDataToFile(driver);
         return driver;
     }
 

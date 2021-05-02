@@ -17,6 +17,11 @@ the framework most likely will not complain and will try to run tests on a wrong
   previous test used Chrome, Chrome is still running, and the new test initializes Edge, the framework 
   will connect to existing Chrome. Currently, there is no way to check what browser is running in RemoteWebDriver if 
   it is connected with SessionId and Url.
+- if there was an issue on initialization of WebDriver, the webdriver executable will be running and the used port will 
+be blocked. There is no way to figure out what port is used: WebDriver instance is not initialized due to Exception, 
+  and webdriver executable writes to a process console so even get it from there is not possible. Well, probably 
+  there are still some ways, but complexity is not worth it. Frankly, this behavior is the same for any framework using 
+  Selenium WebDriver.
   
 
 

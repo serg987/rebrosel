@@ -20,6 +20,7 @@ public class WebDriverKiller {
     }
 
     public static void killWebDriver(TempFileIO.BrowserConnectionData browserData) {
+        if (browserData == null) return;
         boolean waskilled = true;
         if (IS_WINDOWS) {
             waskilled = killWebDriverInWindows(browserData);

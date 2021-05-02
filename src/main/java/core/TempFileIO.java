@@ -1,5 +1,6 @@
 package core;
 
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
 import java.io.*;
@@ -11,7 +12,7 @@ public class TempFileIO {
     private static File tempFile;
     private static BrowserConnectionData browserData;
 
-    private static BrowserConnectionData getBrowserData() {
+    public static BrowserConnectionData getBrowserData() {
         return browserData;
     }
 
@@ -116,6 +117,23 @@ public class TempFileIO {
     private static void deleteTempFileIfExists() {
         if (isTempFileExist()) {
             tempFile.delete();
+        }
+    }
+
+    public static BrowserConnectionData getBrowserData(RemoteWebDriver driver) {
+        URL url = WebDriverHelper.getAddressOfRemoteServer(driver);
+        SessionId sessionId = WebDriverHelper.getSessionId(driver);
+        String browserName = driver.getCapabilities().getBrowserName();
+        TempFileIO.createBrowserData(url.toString(),
+                sessionId.toString(),
+                browserName);
+        return browserData;
+    }
+
+    public static void saveBrowserDataToFile(RemoteWebDriver driver) {
+        if (driver != null) {
+            getBrowserData(driver);
+            saveBrowserConnData();
         }
     }
 

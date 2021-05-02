@@ -20,7 +20,8 @@
   
 ~~- BUG: seems like Opera does not save its name to tmp file~~ - Done; just wrong webdriver version
   
-- check if native JUnit methods (@BeforeX, @Test, etc) verification is not broken by local validate();
+~~- check if native JUnit methods (@BeforeX, @Test, etc) verification is not broken by local validate();~~ - Done - 
+tests has been written
 
 ~~- fill statements - statement should be changed only if something happened~~ - Done
   
@@ -37,7 +38,7 @@
 ~~- failed local tests are green even on failure~~ - Done
   
 - figure out why tempfile is rewritten with empty browser name (try with a wrong webdriver)
-  - kill WebDriver if initializing Browser was not successfull
+  - kill WebDriver if initializing Browser was not successful
   - Do not save file if browser is not running
   
 ~~- Try to get what browser is connected with RemoteWebDriver if it is possible then it is possible to kill it and 

@@ -1,6 +1,7 @@
 package core.runner;
 
 import core.LogHelper;
+import core.TempFileIO;
 import core.WebDriverKiller;
 import core.annotations.BrowserInitialization;
 import core.annotations.OnBrowserStart;
@@ -86,9 +87,6 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         Statement statement = setInitializedWebDriver(); // TODO check the flow - now if browser is definitely just started, it checks for the browser again
 
         return statement;
-        //Statement statement = invokeStaticMethod(testClass, browserInitMethod);
-        //statement = invokeStaticMethod(testClass, onStartBrowserMethod);
-        //setWebDriverField(testClass, "aaaa");
     }
 
     private void verifyBrowserInitializationMethod(TestClass clazz, List<Throwable> errors) {
@@ -171,9 +169,11 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     }
 
     private Statement killWebdriverAndRestartBrowser() {
-        WebDriverKiller.killWebDriver();
+        WebDriverKiller.killWebDriver(TempFileIO.getBrowserData());
         Statement statement = restartBrowserAndDoOnStart();
-        saveBrowserDataToFile((RemoteWebDriver) webDriver);
+        if (statement == null) {
+            TempFileIO.saveBrowserDataToFile((RemoteWebDriver) webDriver);
+        }
         return statement;
     }
 

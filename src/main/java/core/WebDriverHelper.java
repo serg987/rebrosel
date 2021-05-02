@@ -27,19 +27,16 @@ public class WebDriverHelper {
         return browserData.browserName.equalsIgnoreCase("opera");
     }
 
-    public static void saveBrowserDataToFile(RemoteWebDriver driver) {
-        if (driver != null) {
-            getBrowserData(driver);
-            TempFileIO.saveBrowserConnData();
-        }
-    }
-
     public static RemoteWebDriver loadBrowserSessionFromFileIfExists() {
         browserData = TempFileIO.loadBrowserConnData();
-        if (browserData == null || browserData.browserName == "null") {
+        if (browserData == null) {
             LogHelper.logMessage("No browserdata was stored. Will start new browser session.");
             return null;
+        } else if (LocalUtils.isStringNullOrEmpty(browserData.browserName)) {
+            LogHelper.logMessage("Browser was started with issues in the previous session.");
+            return null;
         }
+
         LogHelper.logMessage("Trying to connect to browser: " + browserData.browserName +
                 ". Session url: " + browserData.remoteAddress + "; sessionID: " + browserData.sessionId);
         return createDriverFromSession(browserData);
@@ -119,14 +116,5 @@ public class WebDriverHelper {
         }
 
         return out;
-    }
-
-    private static void getBrowserData(RemoteWebDriver driver) {
-        URL url = WebDriverHelper.getAddressOfRemoteServer(driver);
-        SessionId sessionId = WebDriverHelper.getSessionId(driver);
-        String browserName = driver.getCapabilities().getBrowserName();
-        TempFileIO.createBrowserData(url.toString(),
-                sessionId.toString(),
-                (browserName.isEmpty()) ? "null" : browserName);
     }
 }
