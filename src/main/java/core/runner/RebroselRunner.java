@@ -203,6 +203,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
 
     private Statement setInitializedWebDriver() {
         Statement statement = null;
+        boolean isBrowserColdStarted = false;
 
         webDriver = loadBrowserSessionFromFileIfExists();
 
@@ -213,13 +214,14 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
             if (statement != null) {
                 return statement;
             }
+            isBrowserColdStarted = true;
         }
 
         boolean isBrowserKilled = false;
 
         // Trying to get whether other browsers are working by catching exceptions from their webdrivers.
         try {
-            if (webDriver != null) webDriver.getCurrentUrl();
+            if (webDriver != null && !isBrowserColdStarted) webDriver.getCurrentUrl();
         } catch (UnreachableBrowserException e) {
             LogHelper.logMessage("Webdriver is not reachable.");
             isBrowserKilled = true;
@@ -238,10 +240,8 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         if (isBrowserKilled) {
             LogHelper.logMessage("Will start a new browser session");
             statement = killWebdriverAndRestartBrowser();
-        }
-
-        if (statement == null) {
-            statement = setWebDriverField(testClass, webDriver);
+        } else {
+            setWebDriverField(testClass, webDriver);
         }
 
         if (statement == null) {
