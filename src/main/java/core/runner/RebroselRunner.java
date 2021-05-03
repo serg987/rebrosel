@@ -71,6 +71,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         verifyWebDriverField(errors);
 
         if (!errors.isEmpty()) {
+            errors.stream().map(Throwable::getMessage).forEach(LogHelper::logError);
             isErrorInInitialization = true;
             throw new InitializationError(errors);
         }
@@ -78,12 +79,16 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
 
     private void verifyBrowserInitializationMethod(List<Throwable> errors) {
         List<FrameworkMethod> methods = testClass.getAnnotatedMethods(BrowserInitialization.class);
-        if (methods.isEmpty())
-            errors.add(new Exception("No methods annotated with @BrowserInitialization found."));
+        if (methods.isEmpty()) {
+            String error = "No methods annotated with @BrowserInitialization found.";
+            LogHelper.logError(error);
+            errors.add(new Exception(error));
+            return;
+        }
         browserInitMethod = verifyMoreOneGetFirstRebroselMethodField(methods,
                 BrowserInitialization.class,
                 errors);
-        verifyMethodPublicStaticNoArgsReturnsWebDriver(browserInitMethod, errors);
+        if (browserInitMethod != null) verifyMethodPublicStaticNoArgsReturnsWebDriver(browserInitMethod, errors);
     }
 
     private void verifyOnStartBrowserMethod(List<Throwable> errors) {
@@ -92,7 +97,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         onStartBrowserMethod = verifyMoreOneGetFirstRebroselMethodField(methods,
                 OnBrowserStart.class,
                 errors);
-        onStartBrowserMethod.validatePublicVoidNoArg(true, errors);
+        if (onStartBrowserMethod != null) onStartBrowserMethod.validatePublicVoidNoArg(true, errors);
     }
 
     private <T extends FrameworkMember<T>> T verifyMoreOneGetFirstRebroselMethodField(List<T> list,
@@ -143,21 +148,26 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     private void verifyWebDriverField(List<Throwable> errors) {
         List<FrameworkField> fields = testClass.getAnnotatedFields(RebroselWebDriver.class);
         if (fields.isEmpty()) {
-            errors.add(new Exception("No fields annotated with @RebroselWebDriver found."));
+            String error = "No fields annotated with @RebroselWebDriver found.";
+            LogHelper.logError(error);
+            errors.add(new Exception(error));
             return;
         }
         webDriverField = verifyMoreOneGetFirstRebroselMethodField(fields,
                 RebroselWebDriver.class,
                 errors);
-        Field field = webDriverField.getField();
-        if (field != null) {
-            Class fieldClass = field.getType();
-            StringBuilder builder = new StringBuilder("Fields annotated with @RebroselWebDriver should");
-            List<String> errorStrings = new ArrayList<>();
-            int modifier = field.getModifiers();
-            if (!Modifier.isStatic(modifier)) errorStrings.add("be static");
-            if (fieldClass != WebDriver.class) errorStrings.add("be a org.openqa.selenium.WebDriver class");
-            addError(builder, errorStrings, errors);
+        if (webDriverField != null) {
+            Field field = webDriverField.getField();
+            if (field != null) {
+                Class fieldClass = field.getType();
+                StringBuilder builder = new StringBuilder("Field " + field.getName() +
+                        " annotated with @RebroselWebDriver should");
+                List<String> errorStrings = new ArrayList<>();
+                int modifier = field.getModifiers();
+                if (!Modifier.isStatic(modifier)) errorStrings.add("be static");
+                if (fieldClass != WebDriver.class) errorStrings.add("be org.openqa.selenium.WebDriver class");
+                addError(builder, errorStrings, errors);
+            }
         }
     }
 

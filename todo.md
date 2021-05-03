@@ -50,3 +50,5 @@ restart a proper one~~ - Didn't find a way
 ~~- Test with deleting files (kill WebDriver before deleting the file)~~ - Done
 
 - Handle test classes inheritance
+
+- Check all modifiers. Make private as more as possible
