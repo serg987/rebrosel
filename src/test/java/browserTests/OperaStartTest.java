@@ -22,9 +22,8 @@ public class OperaStartTest extends ParentStartTest {
         // Set up Opera
         String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
         System.setProperty("webdriver.opera.driver", absOperaDriverPath);
-        OperaDriver webDriver = new OperaDriver();
 
-        return webDriver;
+        return new OperaDriver();
     }
 }
 

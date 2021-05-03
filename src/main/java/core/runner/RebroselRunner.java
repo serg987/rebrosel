@@ -118,8 +118,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         StringBuilder builder = new StringBuilder("Only one " + typeStr +
                 " with Annotation @" + annotation.getSimpleName() + " is allowed. Found: ");
         for (FrameworkMember item : list) {
-            builder.append("in Class " + item.getDeclaringClass().getSimpleName() + ": " +
-                    item.getName() + "(), ");
+            builder.append("in Class ").append(item.getDeclaringClass().getSimpleName()).append(": ").append(item.getName()).append("(), ");
         }
         builder.delete(builder.length() - 2, builder.length());
         return builder.toString();

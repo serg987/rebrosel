@@ -32,7 +32,7 @@ public class WebDriverHelper {
         if (browserData == null) {
             LogHelper.logMessage("No browserdata was stored. Will start new browser session.");
             return null;
-        } else if (LocalUtils.isStringNullOrEmpty(browserData.browserName)) {
+        } else if (browserData.browserName == null || browserData.browserName.isEmpty()) {
             LogHelper.logMessage("Browser was started with issues in the previous session.");
             return null;
         }
@@ -54,7 +54,7 @@ public class WebDriverHelper {
             @Override
             public Response execute(Command command) throws IOException {
                 Response response;
-                if (command.getName() == "newSession") {
+                if (command.getName().equals("newSession")) {
                     response = new Response();
                     response.setSessionId(sessionId.toString());
                     response.setStatus(0);
@@ -70,9 +70,7 @@ public class WebDriverHelper {
                         responseCodec = this.getClass().getSuperclass().getDeclaredField("responseCodec");
                         responseCodec.setAccessible(true);
                         responseCodec.set(this, new W3CHttpResponseCodec());
-                    } catch (NoSuchFieldException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
 
@@ -88,17 +86,18 @@ public class WebDriverHelper {
 
 
     public static URL getAddressOfRemoteServer(WebDriver driver) {
-        HttpCommandExecutor executor = invokeMethodInWebDriver(driver, "getCommandExecutor");
+        HttpCommandExecutor executor = (HttpCommandExecutor) invokeMethodInWebDriver(driver,
+                "getCommandExecutor");
 
         return executor.getAddressOfRemoteServer();
     }
 
     public static SessionId getSessionId(WebDriver driver) {
-        return invokeMethodInWebDriver(driver, "getSessionId");
+        return (SessionId) invokeMethodInWebDriver(driver, "getSessionId");
     }
 
-    private static <T> T invokeMethodInWebDriver(WebDriver driver, String methodName) {
-        T out = null;
+    private static Object invokeMethodInWebDriver(WebDriver driver, String methodName) {
+        Object out = null;
         Method[] methods = driver.getClass().getMethods();
 
         Optional<Method> invokingMethodOpt = Arrays.stream(methods).filter(method -> {
@@ -109,7 +108,7 @@ public class WebDriverHelper {
         if (invokingMethodOpt.isPresent()) {
             Method invokingMethod = invokingMethodOpt.get();
             try {
-                out = (T) invokingMethod.invoke(driver);
+                out = invokingMethod.invoke(driver);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 System.out.println("Error while invoking " + methodName + "() in " + driver.toString());
             }

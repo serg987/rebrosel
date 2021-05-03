@@ -1,7 +1,6 @@
 import core.PrivateMethodInvokerHelper;
 import core.TempFileIO;
 import methodOrderTests.*;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,20 +12,20 @@ import java.util.List;
 
 public class MethodOrderVerificationTest {
 
-    private static String[] stringsForColdStart = {"Browser init", "Browser start", "Before class", "Before test", "Test 1",
+    private static final String[] stringsForColdStart = {"Browser init", "Browser start", "Before class", "Before test", "Test 1",
             "After test", "Before test", "Test 2", "After test", "After class"};
-    private static String[] stringsForFailInBrowserInit = {"Browser init"};
-    private static String[] stringsForWithoutOnStart = {"Browser init", "Before class", "Before test", "Test 1",
+    private static final String[] stringsForFailInBrowserInit = {"Browser init"};
+    private static final String[] stringsForWithoutOnStart = {"Browser init", "Before class", "Before test", "Test 1",
             "After test", "Before test", "Test 2", "After test", "After class"};
-    private static String[] stringsForFailInBefore = {"Browser init", "Browser start", "Before class", "Before test",
+    private static final String[] stringsForFailInBefore = {"Browser init", "Browser start", "Before class", "Before test",
             "After test", "Before test", "After test", "After class"};
-    private static String[] stringsForFailInBeforeClass = {"Browser init", "Browser start", "Before class", "After class"};
-    private static String[] stringsForFailInOnStart = {"Browser init", "Browser start"};
-    private static String[] stringsForFailInTest2 = {"Browser init", "Browser start", "Before class", "Before test", "Test 1",
+    private static final String[] stringsForFailInBeforeClass = {"Browser init", "Browser start", "Before class", "After class"};
+    private static final String[] stringsForFailInOnStart = {"Browser init", "Browser start"};
+    private static final String[] stringsForFailInTest2 = {"Browser init", "Browser start", "Before class", "Before test", "Test 1",
             "After test", "Before test", "Test 2", "After test", "After class"};
 
     private static JUnitCore junit;
-    static TempFileIO tempFileIO = new TempFileIO();
+    static final TempFileIO tempFileIO = new TempFileIO();
 
     @BeforeClass
     public static void beforeClass() {
@@ -43,8 +42,7 @@ public class MethodOrderVerificationTest {
                 junit.run(MethodOrderPassTest.class).wasSuccessful());
         List<String> actualStrings = MethodOrderPassTest.getStrings();
 
-        Assert.assertTrue("Order of execution is different",
-                Arrays.asList(stringsForColdStart).equals(actualStrings));
+        Assert.assertEquals("Order of execution is different", Arrays.asList(stringsForColdStart), actualStrings);
     }
 
     @Test
@@ -56,8 +54,7 @@ public class MethodOrderVerificationTest {
                 junit.run(MethodOrderFailInBrowserInitTest.class).wasSuccessful());
         List<String> actualStrings = MethodOrderFailInBrowserInitTest.getStrings();
 
-        Assert.assertTrue("Order of execution is different",
-                Arrays.asList(stringsForFailInBrowserInit).equals(actualStrings));
+        Assert.assertEquals("Order of execution is different", Arrays.asList(stringsForFailInBrowserInit), actualStrings);
     }
 
     @Test
@@ -69,8 +66,7 @@ public class MethodOrderVerificationTest {
                 junit.run(MethodOrderPassWOOnStartTest.class).wasSuccessful());
         List<String> actualStrings = MethodOrderPassWOOnStartTest.getStrings();
 
-        Assert.assertTrue("Order of execution is different",
-                Arrays.asList(stringsForWithoutOnStart).equals(actualStrings));
+        Assert.assertEquals("Order of execution is different", Arrays.asList(stringsForWithoutOnStart), actualStrings);
     }
 
     @Test
@@ -82,8 +78,7 @@ public class MethodOrderVerificationTest {
                 junit.run(MethodOrderFailInOnStartTest.class).wasSuccessful());
         List<String> actualStrings = MethodOrderFailInOnStartTest.getStrings();
 
-        Assert.assertTrue("Order of execution is different",
-                Arrays.asList(stringsForFailInOnStart).equals(actualStrings));
+        Assert.assertEquals("Order of execution is different", Arrays.asList(stringsForFailInOnStart), actualStrings);
     }
 
     @Test
@@ -95,8 +90,7 @@ public class MethodOrderVerificationTest {
                 junit.run(MethodOrderFailInBeforeTest.class).wasSuccessful());
         List<String> actualStrings = MethodOrderFailInBeforeTest.getStrings();
 
-        Assert.assertTrue("Order of execution is different",
-                Arrays.asList(stringsForFailInBefore).equals(actualStrings));
+        Assert.assertEquals("Order of execution is different", Arrays.asList(stringsForFailInBefore), actualStrings);
     }
 
     @Test
@@ -108,8 +102,7 @@ public class MethodOrderVerificationTest {
                 junit.run(MethodOrderFailInTest2Test.class).wasSuccessful());
         List<String> actualStrings = MethodOrderFailInTest2Test.getStrings();
 
-        Assert.assertTrue("Order of execution is different",
-                Arrays.asList(stringsForFailInTest2).equals(actualStrings));
+        Assert.assertEquals("Order of execution is different", Arrays.asList(stringsForFailInTest2), actualStrings);
     }
 
     @Test
@@ -121,8 +114,7 @@ public class MethodOrderVerificationTest {
                 junit.run(MethodOrderFailInBeforeClassTest.class).wasSuccessful());
         List<String> actualStrings = MethodOrderFailInBeforeClassTest.getStrings();
 
-        Assert.assertTrue("Order of execution is different",
-                Arrays.asList(stringsForFailInBeforeClass).equals(actualStrings));
+        Assert.assertEquals("Order of execution is different", Arrays.asList(stringsForFailInBeforeClass), actualStrings);
     }
 }
 

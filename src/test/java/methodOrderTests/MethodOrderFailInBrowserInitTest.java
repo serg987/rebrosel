@@ -17,7 +17,7 @@ public class MethodOrderFailInBrowserInitTest {
     @RebroselWebDriver
     static WebDriver driver;
 
-    static List<String> strings = new ArrayList<>();
+    static final List<String> strings = new ArrayList<>();
 
     @BrowserInitialization
     public static WebDriver browserInit() {

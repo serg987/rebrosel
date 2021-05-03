@@ -1,9 +1,6 @@
 package browserTests;
 
 import core.annotations.BrowserInitialization;
-import core.annotations.OnBrowserStart;
-import core.annotations.RebroselWebDriver;
-import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -27,9 +24,8 @@ public class ChromeStartTest extends ParentStartTest {
         String absChromeDriverPath = currentPath.toAbsolutePath().toString() + "/" + chromeDriverPath;
         System.out.println(absChromeDriverPath);
         System.setProperty("webdriver.chrome.driver", absChromeDriverPath);
-        ChromeDriver webDriver = new ChromeDriver();
 
-        return webDriver;
+        return new ChromeDriver();
     }
 }
 

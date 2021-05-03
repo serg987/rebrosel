@@ -21,16 +21,16 @@ public class PrivateMethodInvokerHelper {
             e.printStackTrace();
         }
 
-        method.setAccessible(true);
-
         Object out = null;
 
-        try {
-            out = method.invoke(obj, parameters == null ? null : parameters.toArray());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        if (method != null) {
+            method.setAccessible(true);
+            
+            try {
+                out = method.invoke(obj, parameters == null ? null : parameters.toArray());
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
 
         return out;

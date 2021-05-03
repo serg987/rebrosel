@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 @RunWith(core.runner.RebroselRunner.class)
 public class OnBrowserStartTest {
 
-    private static String url = "https://www.google.com";
+    private static final String url = "https://www.google.com";
 
     @RebroselWebDriver
     static WebDriver driver;
@@ -27,9 +27,8 @@ public class OnBrowserStartTest {
         String absChromeDriverPath = currentPath.toAbsolutePath().toString() + "/" + chromeDriverPath;
         System.out.println(absChromeDriverPath);
         System.setProperty("webdriver.chrome.driver", absChromeDriverPath);
-        ChromeDriver webDriver = new ChromeDriver();
 
-        return webDriver;
+        return new ChromeDriver();
     }
 
     @OnBrowserStart

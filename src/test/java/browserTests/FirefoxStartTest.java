@@ -23,9 +23,8 @@ public class FirefoxStartTest extends ParentStartTest {
         String absFFDriverPath = currentPath.toAbsolutePath().toString() + "/" +
                 "src/main/resources/drivers/geckodriver.exe";
         System.setProperty("webdriver.gecko.driver", absFFDriverPath);
-        FirefoxDriver webDriver = new FirefoxDriver();
 
-        return webDriver;
+        return new FirefoxDriver();
     }
 }
 

@@ -28,9 +28,8 @@ public class EdgeStartTest extends ParentStartTest {
         // Set up the binary path to exe file
         options.setBinary("C:/Windows/SystemApps/Microsoft.MicrosoftEdge_8wekyb3d8bbwe/MicrosoftEdge.exe");
         EdgeOptions edgeOptions = new EdgeOptions();
-        EdgeDriver webDriver = new EdgeDriver(edgeOptions);
 
-        return webDriver;
+        return new EdgeDriver(edgeOptions);
     }
 }
 

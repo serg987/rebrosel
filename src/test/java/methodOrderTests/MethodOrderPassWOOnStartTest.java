@@ -1,7 +1,6 @@
 package methodOrderTests;
 
 import core.annotations.BrowserInitialization;
-import core.annotations.OnBrowserStart;
 import core.annotations.RebroselWebDriver;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -17,7 +16,7 @@ public class MethodOrderPassWOOnStartTest {
     @RebroselWebDriver
     static WebDriver driver;
 
-    static List<String> strings = new ArrayList<>();
+    static final List<String> strings = new ArrayList<>();
 
     @BrowserInitialization
     public static WebDriver browserInit() {

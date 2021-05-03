@@ -9,6 +9,6 @@ public class NoAnnotatedFieldsMethods {
 
     @Test
     public void test() {
-        System.out.println("");
+        System.out.println();
     }
 }

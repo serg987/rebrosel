@@ -19,7 +19,8 @@ public class TempFileIO {
     private static File getTempFile() {
         if (tempFile != null) return tempFile;
 
-        String tempPathStr = (LocalUtils.isStringNullOrEmpty(EnvironmentVariables.temporaryDirectory)) ?
+        String tempPathStr = (EnvironmentVariables.temporaryDirectory == null ||
+                EnvironmentVariables.temporaryDirectory.isEmpty()) ?
                 System.getProperty("java.io.tmpdir") :
                 EnvironmentVariables.temporaryDirectory;
 
@@ -120,14 +121,13 @@ public class TempFileIO {
         }
     }
 
-    public static BrowserConnectionData getBrowserData(RemoteWebDriver driver) {
+    public static void getBrowserData(RemoteWebDriver driver) {
         URL url = WebDriverHelper.getAddressOfRemoteServer(driver);
         SessionId sessionId = WebDriverHelper.getSessionId(driver);
         String browserName = driver.getCapabilities().getBrowserName();
         TempFileIO.createBrowserData(url.toString(),
                 sessionId.toString(),
                 browserName);
-        return browserData;
     }
 
     public static void saveBrowserDataToFile(RemoteWebDriver driver) {

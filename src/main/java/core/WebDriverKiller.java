@@ -10,24 +10,15 @@ import static core.EnvironmentVariables.IS_MAC;
 
 public class WebDriverKiller {
 
-    public static void killWebDriver() {
-        TempFileIO.BrowserConnectionData browserData = WebDriverHelper.getLoadedBrowserDataFromFile();
-        if (browserData != null) {
-            killWebDriver(browserData);
-        } else {
-            LogHelper.logMessage("No browser data was loaded from file. No webdriver to kill.");
-        }
-    }
-
     public static void killWebDriver(TempFileIO.BrowserConnectionData browserData) {
         if (browserData == null) return;
-        boolean waskilled = true;
+        boolean wasKilled = true;
         if (IS_WINDOWS) {
-            waskilled = killWebDriverInWindows(browserData);
+            wasKilled = killWebDriverInWindows(browserData);
         } else if (IS_MAC) {
-            waskilled = killWebDriverInMac(browserData);
+            wasKilled = killWebDriverInMac(browserData);
         }
-        if (!waskilled) LogHelper.logMessage("No process was found handling webdriver port. Nothing to kill.");
+        if (!wasKilled) LogHelper.logMessage("No process was found handling webdriver port. Nothing to kill.");
     }
 
     private static boolean killWebDriverInWindows(TempFileIO.BrowserConnectionData browserData) {
@@ -81,7 +72,7 @@ public class WebDriverKiller {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (process.isAlive()) process.destroy();
+            if (process != null && process.isAlive()) process.destroy();
 
             if (reader != null) {
                 try {

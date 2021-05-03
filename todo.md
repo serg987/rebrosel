@@ -12,7 +12,7 @@
   
 - ~~make browser methods executable~~  - done
   
-- move draft of the runner to actual framework and adapt it - WIP
+- move draft of the runner to actual framework and adapt it - Done for Win
   
 ~~- change the flow - now if browser is definitely just started, it checks??? for the browser again~~ - Done
 
@@ -49,6 +49,6 @@ restart a proper one~~ - Didn't find a way
 
 ~~- Test with deleting files (kill WebDriver before deleting the file)~~ - Done
 
-- Handle test classes inheritance
+~~- Handle test classes inheritance~~ - Done
 
 - Check all modifiers. Make private as more as possible

@@ -6,8 +6,6 @@ plugins {
 group 'com.serg987'
 version '0.1a'
 
-sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
 }
