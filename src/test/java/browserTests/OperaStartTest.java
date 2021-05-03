@@ -1,5 +1,6 @@
 package browserTests;
 
+import core.DriversForTests;
 import core.annotations.BrowserInitialization;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -20,7 +21,7 @@ public class OperaStartTest extends ParentStartTest {
         Path currentPath = Paths.get("");
 
         // Set up Opera
-        String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/operadriver.exe";
+        String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + DriversForTests.OPERA_DRIVER_PATH;
         System.setProperty("webdriver.opera.driver", absOperaDriverPath);
 
         return new OperaDriver();

@@ -1,3 +1,4 @@
+import core.DriversForTests;
 import core.annotations.BrowserInitialization;
 import core.annotations.OnBrowserStart;
 import core.annotations.RebroselWebDriver;
@@ -23,7 +24,7 @@ public class OnBrowserStartTest {
         Path currentPath = Paths.get("");
 
         // Set up Chrome
-        String chromeDriverPath = "src/main/resources/drivers/chromedriver.exe";
+        String chromeDriverPath = DriversForTests.CHROME_DRIVER_PATH;
         String absChromeDriverPath = currentPath.toAbsolutePath().toString() + "/" + chromeDriverPath;
         System.out.println(absChromeDriverPath);
         System.setProperty("webdriver.chrome.driver", absChromeDriverPath);

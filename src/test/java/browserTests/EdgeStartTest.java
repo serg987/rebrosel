@@ -1,5 +1,6 @@
 package browserTests;
 
+import core.DriversForTests;
 import core.annotations.BrowserInitialization;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -22,11 +23,11 @@ public class EdgeStartTest extends ParentStartTest {
         Path currentPath = Paths.get("");
 
         // Set up Edge
-        String absEdgeDriverPath = currentPath.toAbsolutePath().toString() + "/" + "src/main/resources/drivers/msedgedriver.exe";
+        String absEdgeDriverPath = currentPath.toAbsolutePath().toString() + "/" + DriversForTests.EDGE_DRIVER_PATH;
         System.setProperty("webdriver.edge.driver", absEdgeDriverPath);
         ChromeOptions options = new ChromeOptions();
         // Set up the binary path to exe file
-        options.setBinary("C:/Windows/SystemApps/Microsoft.MicrosoftEdge_8wekyb3d8bbwe/MicrosoftEdge.exe");
+        options.setBinary(DriversForTests.EDGE_EXEC_PATH);
         EdgeOptions edgeOptions = new EdgeOptions();
 
         return new EdgeDriver(edgeOptions);

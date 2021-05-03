@@ -1,5 +1,6 @@
 package browserTests;
 
+import core.DriversForTests;
 import core.annotations.BrowserInitialization;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -21,7 +22,7 @@ public class FirefoxStartTest extends ParentStartTest {
 
         // Set up FF
         String absFFDriverPath = currentPath.toAbsolutePath().toString() + "/" +
-                "src/main/resources/drivers/geckodriver.exe";
+                DriversForTests.FF_DRIVER_PATH;
         System.setProperty("webdriver.gecko.driver", absFFDriverPath);
 
         return new FirefoxDriver();

@@ -8,6 +8,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static core.DriversForTests.*;
+
 @RunWith(core.runner.RebroselRunner.class)
 public class ChromeStartTest extends ParentStartTest {
 
@@ -20,7 +22,7 @@ public class ChromeStartTest extends ParentStartTest {
         Path currentPath = Paths.get("");
 
         // Set up Chrome
-        String chromeDriverPath = "src/main/resources/drivers/chromedriver.exe";
+        String chromeDriverPath = CHROME_DRIVER_PATH;
         String absChromeDriverPath = currentPath.toAbsolutePath().toString() + "/" + chromeDriverPath;
         System.out.println(absChromeDriverPath);
         System.setProperty("webdriver.chrome.driver", absChromeDriverPath);
