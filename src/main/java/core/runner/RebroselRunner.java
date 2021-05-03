@@ -16,10 +16,7 @@ import org.openqa.selenium.remote.UnreachableBrowserException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static core.WebDriverHelper.*;
 
@@ -29,6 +26,7 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     private TestClass testClass;
     private FrameworkMethod browserInitMethod;
     private FrameworkMethod onStartBrowserMethod;
+    private FrameworkField webDriverField;
     private boolean isErrorInInitialization = false;
 
     /**
@@ -44,7 +42,8 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected Statement withBeforeClasses(Statement statement) {
-        Statement initializationStatement = initializeFramework();
+        LogHelper.logMessage("Initializing framework...");
+        Statement initializationStatement = setInitializedWebDriver();
         isErrorInInitialization = initializationStatement != null;
         if (isErrorInInitialization) {
             return initializationStatement;
@@ -54,7 +53,6 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     }
 
     /**
-     *
      * Prevent {@code @AfterClass} from execution if there was an error in initialization
      * (both in {@code @BrowserInitialization} and {@code @OnBrowserStart}
      */
@@ -68,9 +66,9 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         List<Throwable> errors = new ArrayList<>();
 
         testClass = getTestClass();
-        verifyOnStartBrowserMethod(testClass, errors);
-        verifyBrowserInitializationMethod(testClass, errors);
-        verifyWebDriverField(testClass, errors);
+        verifyBrowserInitializationMethod(errors);
+        verifyOnStartBrowserMethod(errors);
+        verifyWebDriverField(errors);
 
         if (!errors.isEmpty()) {
             isErrorInInitialization = true;
@@ -78,30 +76,48 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private Statement initializeFramework() {
-        LogHelper.logMessage("Initializing framework...");
-        TestClass testClass = getTestClass();
-        browserInitMethod = testClass.getAnnotatedMethods(BrowserInitialization.class).get(0);
-        List<FrameworkMethod> onStartBrowserMethods = testClass.getAnnotatedMethods(OnBrowserStart.class);
-        onStartBrowserMethod = onStartBrowserMethods.size() > 0 ? onStartBrowserMethods.get(0) : null;
-        Statement statement = setInitializedWebDriver();
-
-        return statement;
+    private void verifyBrowserInitializationMethod(List<Throwable> errors) {
+        List<FrameworkMethod> methods = testClass.getAnnotatedMethods(BrowserInitialization.class);
+        if (methods.isEmpty())
+            errors.add(new Exception("No methods annotated with @BrowserInitialization found."));
+        browserInitMethod = verifyMoreOneGetFirstRebroselMethodField(methods,
+                BrowserInitialization.class,
+                errors);
+        verifyMethodPublicStaticNoArgsReturnsWebDriver(browserInitMethod, errors);
     }
 
-    private void verifyBrowserInitializationMethod(TestClass clazz, List<Throwable> errors) {
-        List<FrameworkMethod> methods = clazz.getAnnotatedMethods(BrowserInitialization.class);
-        if (methods.isEmpty()) errors.add(new Exception("No methods annotated with @BrowserInitialization found."));
-        if (methods.size() > 1) errors.add(new Exception("Only one method annotated with Annotation " +
-                "@BrowserInitialization is allowed."));
-        if (methods.size() == 1) verifyMethodPublicStaticNoArgsReturnsWebDriver(methods.get(0), errors);
+    private void verifyOnStartBrowserMethod(List<Throwable> errors) {
+        List<FrameworkMethod> methods = testClass.getAnnotatedMethods(OnBrowserStart.class);
+        if (methods.isEmpty()) return;
+        onStartBrowserMethod = verifyMoreOneGetFirstRebroselMethodField(methods,
+                OnBrowserStart.class,
+                errors);
+        onStartBrowserMethod.validatePublicVoidNoArg(true, errors);
     }
 
-    private void verifyOnStartBrowserMethod(TestClass clazz, List<Throwable> errors) {
-        List<FrameworkMethod> methods = clazz.getAnnotatedMethods(OnBrowserStart.class);
-        if (methods.size() > 1) errors.add(new Exception("Only one method annotated with Annotation " +
-                "@BrowserInitialization is allowed."));
-        if (!methods.isEmpty()) validatePublicVoidNoArgMethods(OnBrowserStart.class, true, errors);
+    private <T extends FrameworkMember<T>> T verifyMoreOneGetFirstRebroselMethodField(List<T> list,
+                                                                Class annotation,
+                                                                List<Throwable> errors) {
+        if (list.size() > 1) {
+            errors.add(new Exception(createErrorStringForMultipleFieldsMethods(list, annotation)));
+        } else {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    private <T extends FrameworkMember<T>> String createErrorStringForMultipleFieldsMethods(List<T> list,
+                                                                                            Class annotation) {
+        FrameworkMember type = list.get(0);
+        String typeStr = (type.getClass().equals(FrameworkMethod.class)) ? "method" : "field";
+        StringBuilder builder = new StringBuilder("Only one " + typeStr +
+                " with Annotation @" + annotation.getSimpleName() + " is allowed. Found: ");
+        for (FrameworkMember item : list) {
+            builder.append("in Class " + item.getDeclaringClass().getSimpleName() + ": " +
+                    item.getName() + "(), ");
+        }
+        builder.delete(builder.length() - 2, builder.length());
+        return builder.toString();
     }
 
     private void verifyMethodPublicStaticNoArgsReturnsWebDriver(FrameworkMethod method,
@@ -124,14 +140,17 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         addError(builder, errorStrings, errors);
     }
 
-    private void verifyWebDriverField(TestClass clazz,
-                                      List<Throwable> errors) {
-        List<FrameworkField> fields = clazz.getAnnotatedFields(RebroselWebDriver.class);
-        if (fields.isEmpty()) errors.add(new Exception("No fields annotated with @RebroselWebDriver found."));
-        if (fields.size() > 1) errors.add(new Exception("Only one field annotated with Annotation " +
-                "@RebroselWebDriver is allowed."));
-        if (fields.size() == 1) {
-            Field field = fields.get(0).getField();
+    private void verifyWebDriverField(List<Throwable> errors) {
+        List<FrameworkField> fields = testClass.getAnnotatedFields(RebroselWebDriver.class);
+        if (fields.isEmpty()) {
+            errors.add(new Exception("No fields annotated with @RebroselWebDriver found."));
+            return;
+        }
+        webDriverField = verifyMoreOneGetFirstRebroselMethodField(fields,
+                RebroselWebDriver.class,
+                errors);
+        Field field = webDriverField.getField();
+        if (field != null) {
             Class fieldClass = field.getType();
             StringBuilder builder = new StringBuilder("Fields annotated with @RebroselWebDriver should");
             List<String> errorStrings = new ArrayList<>();
@@ -154,8 +173,8 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private static Statement setWebDriverField(TestClass clazz, WebDriver driver) {
-        Field field = clazz.getAnnotatedFields(RebroselWebDriver.class).get(0).getField();
+    private Statement setWebDriverField(TestClass clazz, WebDriver driver) {
+        Field field = webDriverField.getField();
         boolean defaultAccessible = field.isAccessible();
         field.setAccessible(true);
         try {
@@ -180,11 +199,11 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
     private Statement restartBrowserAndDoOnStart() {
         Object obj;
         try {
-            obj = browserInitMethod.getDeclaringClass().newInstance();
+            obj = testClass.getJavaClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             return new Fail(e);
         }
-        try {
+        try { // TODO check if field is still needed in inheritance search
             webDriver = (WebDriver) browserInitMethod.getMethod().invoke(obj);
         } catch (IllegalArgumentException | ReflectiveOperationException e) {
             return new Fail(e);
