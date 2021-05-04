@@ -16,7 +16,7 @@ task createJar(type: Jar) {
                 'Implementation-Version': '0.1a',
                 'Implementation-Vendor': 'Sergey Kiselev',
                 'Main-Class': 'Main',
-                'Sealed': true
+                'Sealed': false
     }
     exclude('drivers')
     with jar
