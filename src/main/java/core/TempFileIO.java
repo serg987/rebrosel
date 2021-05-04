@@ -39,7 +39,7 @@ public class TempFileIO {
         return getTempFile().exists();
     }
 
-    public static BrowserConnectionData loadBrowserConnData() {
+    static BrowserConnectionData loadBrowserConnData() {
         if (!isTempFileExist()) return null;
 
         BufferedReader reader = null;
@@ -68,7 +68,7 @@ public class TempFileIO {
         return createBrowserData(urlStr, sessionIdStr, browserName);
     }
 
-    public static void saveBrowserConnData() {
+    private static void saveBrowserConnData() {
         deleteTempFileIfExists();
 
         BufferedWriter writer = null;
@@ -94,7 +94,7 @@ public class TempFileIO {
         }
     }
 
-    public static BrowserConnectionData createBrowserData(String urlStr, String sessionIdStr, String browserName) {
+    static BrowserConnectionData createBrowserData(String urlStr, String sessionIdStr, String browserName) {
         URL url = null;
         try {
             url = new URL(urlStr);
@@ -121,7 +121,7 @@ public class TempFileIO {
         }
     }
 
-    public static void getBrowserData(RemoteWebDriver driver) {
+    private static void getBrowserData(RemoteWebDriver driver) {
         URL url = WebDriverHelper.getAddressOfRemoteServer(driver);
         SessionId sessionId = WebDriverHelper.getSessionId(driver);
         String browserName = driver.getCapabilities().getBrowserName();

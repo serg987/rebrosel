@@ -51,7 +51,9 @@ restart a proper one~~ - Didn't find a way
 
 ~~- Handle test classes inheritance~~ - Done
 
-- Check all modifiers. Make private as more as possible
+- ~~Run static analyzis again~~ - Done
+
+- ~~Check all modifiers. Make private as more as possible~~ - Done
 
 - check on compiled library
 

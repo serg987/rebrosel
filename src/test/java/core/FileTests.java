@@ -86,7 +86,7 @@ public class FileTests {
 
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "createBrowserData", parameters);
 
-        TempFileIO.saveBrowserConnData();
+        PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "saveBrowserConnData", null);
 
         exists = (boolean) PrivateMethodInvokerHelper
                 .invokePrivateMethod(tempFileIO, "isTempFileExist", null);
@@ -107,7 +107,7 @@ public class FileTests {
 
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "createBrowserData", parameters);
 
-        TempFileIO.saveBrowserConnData();
+        PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "saveBrowserConnData", null);
 
         TempFileIO.BrowserConnectionData data = TempFileIO.loadBrowserConnData();
         System.out.println("URL: " + data.remoteAddress.toString());
@@ -127,7 +127,7 @@ public class FileTests {
 
         PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "createBrowserData", parameters);
 
-        TempFileIO.saveBrowserConnData();
+        PrivateMethodInvokerHelper.invokePrivateMethod(tempFileIO, "saveBrowserConnData", null);
 
         data = TempFileIO.loadBrowserConnData();
         System.out.println("URL: " + data.remoteAddress.toString());

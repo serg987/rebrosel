@@ -85,14 +85,14 @@ public class WebDriverHelper {
     }
 
 
-    public static URL getAddressOfRemoteServer(WebDriver driver) {
+    static URL getAddressOfRemoteServer(WebDriver driver) {
         HttpCommandExecutor executor = (HttpCommandExecutor) invokeMethodInWebDriver(driver,
                 "getCommandExecutor");
 
         return executor.getAddressOfRemoteServer();
     }
 
-    public static SessionId getSessionId(WebDriver driver) {
+    static SessionId getSessionId(WebDriver driver) {
         return (SessionId) invokeMethodInWebDriver(driver, "getSessionId");
     }
 
