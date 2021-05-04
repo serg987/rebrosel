@@ -27,7 +27,7 @@ public class EdgeStartTest extends ParentStartTest {
         System.setProperty("webdriver.edge.driver", absEdgeDriverPath);
         ChromeOptions options = new ChromeOptions();
         // Set up the binary path to exe file
-        options.setBinary(DriversForTests.EDGE_EXEC_PATH);
+      //  options.setBinary(DriversForTests.EDGE_EXEC_PATH);
         EdgeOptions edgeOptions = new EdgeOptions();
 
         return new EdgeDriver(edgeOptions);

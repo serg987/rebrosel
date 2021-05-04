@@ -261,7 +261,9 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
                     || ((e.getClass().getCanonicalName().contains("NoSuchSessionException")
                     && (message
                     .equalsIgnoreCase("Tried to run command without establishing a connection"))
-                    || message.equalsIgnoreCase("invalid session id")));
+                    || message.equalsIgnoreCase("invalid session id")
+                    || message.equalsIgnoreCase("Browsing context has been discarded")
+                    || message.equalsIgnoreCase("no such window: window was already closed")));
             if (!isBrowserKilled) throw e;
         }
 

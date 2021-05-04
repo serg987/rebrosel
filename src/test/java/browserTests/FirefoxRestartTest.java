@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 public class FirefoxRestartTest extends ParentRestartTest {
 
     public FirefoxRestartTest() {
-        expectedToInclude = "https://www.google.com/gmail/";
+        expectedToInclude = "https://www.google.com/";
     }
 }
 

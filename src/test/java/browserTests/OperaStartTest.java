@@ -21,7 +21,7 @@ public class OperaStartTest extends ParentStartTest {
         Path currentPath = Paths.get("");
 
         // Set up Opera
-        String absOperaDriverPath = currentPath.toAbsolutePath().toString() + "/" + DriversForTests.OPERA_DRIVER_PATH;
+        String absOperaDriverPath = DriversForTests.OPERA_DRIVER_PATH;
         System.setProperty("webdriver.opera.driver", absOperaDriverPath);
 
         return new OperaDriver();

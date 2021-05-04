@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 public class FirefoxStartTest extends ParentStartTest {
 
     public FirefoxStartTest() {
-        expectedToInclude = "https://www.google.com/gmail/";
+        expectedToInclude = "https://www.google.com/";
     }
 
     @BrowserInitialization
@@ -21,8 +21,7 @@ public class FirefoxStartTest extends ParentStartTest {
         Path currentPath = Paths.get("");
 
         // Set up FF
-        String absFFDriverPath = currentPath.toAbsolutePath().toString() + "/" +
-                DriversForTests.FF_DRIVER_PATH;
+        String absFFDriverPath = DriversForTests.FF_DRIVER_PATH;
         System.setProperty("webdriver.gecko.driver", absFFDriverPath);
 
         return new FirefoxDriver();
