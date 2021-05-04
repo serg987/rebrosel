@@ -26,7 +26,9 @@ be blocked. There is no way to figure out what port is used: WebDriver instance 
   possible. Well, probably there are still some ways, but complexity is not worth it. Frankly, this behavior is the 
   same for any framework using Selenium WebDriver.
   
-
+  <img src="mermaid-diagram.png" width="300" alt="Diagram"/>
+  
+![drawing](./mermaid-diagram.png)
 
 
                                         
