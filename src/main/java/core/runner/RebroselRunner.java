@@ -263,7 +263,8 @@ public class RebroselRunner extends BlockJUnit4ClassRunner {
                     .equalsIgnoreCase("Tried to run command without establishing a connection"))
                     || message.equalsIgnoreCase("invalid session id")
                     || message.equalsIgnoreCase("Browsing context has been discarded")
-                    || message.equalsIgnoreCase("no such window: window was already closed")));
+                    || message.equalsIgnoreCase("no such window: window was already closed")
+                    || message.equals(""))); // Safari
             if (!isBrowserKilled) throw e;
         }
 

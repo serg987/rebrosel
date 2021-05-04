@@ -59,4 +59,13 @@ public class StartWithDeletedFileTest {
                 junit.run(browserTests.OperaStartTest.class).wasSuccessful());
         browserTests.OperaStartTest.killWebDriver();
     }
+
+    @Test
+    public void safari() {
+        if (System.getProperty("os.name").toLowerCase().contains("mac os")) {
+            Assert.assertTrue("Test was not successful",
+                    junit.run(browserTests.SafariStartTest.class).wasSuccessful());
+            browserTests.SafariStartTest.killWebDriver();
+        }
+    }
 }
