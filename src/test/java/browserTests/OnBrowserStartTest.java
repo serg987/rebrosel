@@ -1,4 +1,5 @@
-import core.DriversForTests;
+package browserTests;
+
 import core.annotations.BrowserInitialization;
 import core.annotations.OnBrowserStart;
 import core.annotations.RebroselWebDriver;

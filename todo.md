@@ -1,10 +1,10 @@
 # Todos:
 
-- get rid of 'WebDriverHelper.java uses unchecked or unsafe operations.' while compiling
+- ~~get rid of 'WebDriverHelper.java uses unchecked or unsafe operations.' while compiling~~ - Done
   
 - ~~do something with Opera driver trowing no exceptions if browser is closed~~ - done
   
-- kill the previous webdriver executable if browser is closed (platform - depending) - done for Win
+- ~~kill the previous webdriver executable if browser is closed (platform - depending)~~ - done
   
 - get rid of 'Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.'
   
@@ -12,7 +12,7 @@
   
 - ~~make browser methods executable~~  - done
   
-- move draft of the runner to actual framework and adapt it - Done for Win
+- ~~move draft of the runner to actual framework and adapt it~~ - Done
   
 ~~- change the flow - now if browser is definitely just started, it checks??? for the browser again~~ - Done
 
@@ -52,3 +52,7 @@ restart a proper one~~ - Didn't find a way
 ~~- Handle test classes inheritance~~ - Done
 
 - Check all modifiers. Make private as more as possible
+
+- check on compiled library
+
+- write docs

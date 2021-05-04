@@ -1,6 +1,5 @@
-package core;
+package browserTests;
 
-// No other way to make it visible. // TODO DELETE for public repo
 public class DriversForTests {
     public static final String CHROME_DRIVER_PATH = "src/main/resources/drivers/chromedriver.exe";
     public static final String FF_DRIVER_PATH = "src/main/resources/drivers/geckodriver.exe";

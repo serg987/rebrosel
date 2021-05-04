@@ -8,7 +8,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static core.DriversForTests.*;
+import static browserTests.DriversForTests.*;
 
 @RunWith(core.runner.RebroselRunner.class)
 public class ChromeStartTest extends ParentStartTest {

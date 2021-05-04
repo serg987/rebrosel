@@ -1,6 +1,5 @@
 package browserTests;
 
-import core.DriversForTests;
 import core.annotations.BrowserInitialization;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
