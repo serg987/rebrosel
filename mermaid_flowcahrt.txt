@@ -1,15 +1,18 @@
 graph TD
 
-    A[Start] --> B{Is previous<br>session saved?}
+    A(Start) --> B{Is previous<br>session saved?}
     B --> |Yes| C{Session browser<br>still working?}
-    C --> |No| H
-    C --> |Yes| D(Create<br>RemoteWebDriver)
-    D --> E("Assign<br>@RebroselWebDriver Field")
-    E --> F(JUnit native<br>execution)
-    F --> G[End]
-    B --> |No| H("Execute<br>@BrowserInitialization")
-    H --> I("Execute @OnBrowserStart")
+    C --> |No| L{Is prevous webdriver<br>executable still working?}
+    C --> |Yes| D[Create<br>RemoteWebDriver]
+    D --> E["Assign<br>@RebroselWebDriver Field"]
+    E --> F[JUnit native<br>execution]
+    F --> G(End)
+    B --> |No| H["Execute<br>@BrowserInitialization"]
+    H --> I["Execute @OnBrowserStart"]
     I --> J{WebDriver started<br>successfully?}
-    J --> |Yes| K("Save WebDriver<br>session info")
+    J --> |Yes| K["Save WebDriver<br>session info"]
     K --> E
     J --> |No| G
+    L --> |No| H
+    L --> |Yes| M[Kill webdriver<br>executable]
+    M --> H
