@@ -37,6 +37,16 @@ public class WebDriverKiller {
     }
 
     private static boolean killWebDriverInMac(TempFileIO.BrowserConnectionData browserData) {
+        String port = Arrays.stream(browserData.remoteAddress.toString().split(":"))
+                .reduce((a, b) -> b).orElse("99999");
+        String webDriverProcess = executeCommandAndFindStringContains("lsof -i tcp:" + port, port);
+        if (!webDriverProcess.isEmpty()) {
+            String pid = webDriverProcess.split(" ")[1];
+            LogHelper.logMessage("Found process with PID=" + pid + " handling port " + port
+                    + ". Will kill it.");
+            executeCommandAndFindStringContains("kill -15 " + pid, "");
+            return true;
+        }
         return false;
     }
 
@@ -58,7 +68,8 @@ public class WebDriverKiller {
     }
 
     private static boolean isOperaBrowserWorkingInMac() {
-        return false;
+        String opera = executeCommandAndFindStringContains("ps -A", "opera.app");
+        return !opera.isEmpty();
     }
 
     private static String executeCommandAndFindStringContains(String command, String find) {
@@ -68,7 +79,7 @@ public class WebDriverKiller {
         try {
             process = Runtime.getRuntime().exec(command);
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            out = reader.lines().filter(s -> s.contains(find)).findFirst().orElse("");
+            out = reader.lines().filter(s -> s.toLowerCase().contains(find)).findFirst().orElse("");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

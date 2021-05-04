@@ -44,4 +44,14 @@ public class BrowserTests {
         Assert.assertTrue("Test was not successful",
                 junit.run(browserTests.OperaRestartTest.class).wasSuccessful());
     }
+
+    @Test
+    public void safari() {
+        if (System.getProperty("os.name").toLowerCase().contains("mac os")) {
+            Assert.assertTrue("Test was not successful",
+                    junit.run(browserTests.SafariStartTest.class).wasSuccessful());
+            Assert.assertTrue("Test was not successful",
+                    junit.run(browserTests.SafariRestartTest.class).wasSuccessful());
+        }
+    }
 }

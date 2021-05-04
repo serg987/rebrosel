@@ -9,6 +9,9 @@ https://tarunlalwani.com/post/reusing-existing-browser-session-selenium-java/
   method with annotation @AfterClass will not be executed.
 
 Known issues:
+- Opera browser should be fully killed to restart (issue mostly confusing on Mac). Operadriver does not throw any 
+  exceptions if the browser is not ready for some reasons. So the framework checks the working browser by running 
+  processes. 
 - do not include `test.java.browserTests/*` and `test.java.methodOrderTests/*` into tests on compile. Those tests are 
   running inside `test.java.BrowserTests`, `test.java.core.StartWithDeletedFileTest.java` and 
   `test.java.MethodOrderVerificationTest.java` - this will create failures if run separately
