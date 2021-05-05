@@ -6,7 +6,7 @@
   
 - ~~kill the previous webdriver executable if browser is closed (platform - depending)~~ - done
   
-- get rid of 'Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.'
+- ~~get rid of 'Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.'~~ - no longer appears
   
 - ~~check if the new browser is not the same as was stored and then start a new one.~~ - no need to, it will connect to the last opened and stored webdriver
   
@@ -55,6 +55,6 @@ restart a proper one~~ - Didn't find a way
 
 - ~~Check all modifiers. Make private as more as possible~~ - Done
 
-- check on compiled library
+- ~~check on compiled library~~ - Done
 
-- write docs
+- ~~write docs~~ - Done
