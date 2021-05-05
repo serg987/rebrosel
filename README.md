@@ -116,9 +116,6 @@ Known issues:
 - Opera browser should be fully killed to make framework restart the browser (issue mostly confusing on Mac). 
   Operadriver does not throw any exceptions if the browser is not ready for some reason. So the framework checks the 
   working browser in running processes.
-- Do not include `test.java.browserTests/*` and `test.java.methodOrderTests/*` into tests on compile. Those tests are 
-  running inside `test.java.BrowserTests`, `test.java.core.StartWithDeletedFileTest.java` and 
-  `test.java.MethodOrderVerificationTest.java` - this will create failures if run separately
 - If another type of browser is initialized in `@BrowserInitialization` and the previous one is still running, the 
   framework most likely will not complain and will try to run tests on the wrong browser. For example, the previous 
   test used Chrome, Chrome is still running, and the new test initializes Edge, the framework will connect to existing 
